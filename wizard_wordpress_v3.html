@@ -643,6 +643,11 @@ function bindRadios(ctx) {
   });
 }
 
+function scrollToTop() {
+  window.scrollTo({top: 0, behavior: 'smooth'});
+  try { window.parent.postMessage({action:'scrollToWizard'}, '*'); } catch(e){}
+}
+
 function showError(msg) {
   var existing = document.getElementById('wz-error');
   if (existing) existing.remove();
@@ -734,7 +739,7 @@ function render() {
   var nav = el('div','wz-nav');
   if (cur > 0) {
     var back = el('button','wz-back'); back.textContent = 'Zur\u00fcck';
-    back.addEventListener('click', function(){ cur--; render(); });
+    back.addEventListener('click', function(){ cur--; render(); scrollToTop(); });
     nav.appendChild(back);
   } else {
     nav.appendChild(el('span'));
@@ -747,6 +752,7 @@ function render() {
       if (err) err.remove();
       if (!validateStep(cur)) return;
       cur++; render();
+      scrollToTop();
     });
     nav.appendChild(next);
   } else {
