@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Patientenverfügung kostenlos erstellen</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Georgia,serif;background:#f8f7f4;color:#1a1a18;padding:2rem 1rem 4rem}
+.wz-wrap{max-width:680px;margin:0 auto}
+.wz-progress{display:flex;align-items:center;margin-bottom:2rem}
+.wz-dot-wrap{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;cursor:pointer}
+.wz-dot{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;border:1.5px solid #ccc;background:#fff;color:#999;transition:all .2s;font-family:sans-serif}
+.wz-dot.active{background:#0F6E56;border-color:#0F6E56;color:#fff}
+.wz-dot.done{background:#E1F5EE;border-color:#0F6E56;color:#085041}
+.wz-step-label{font-size:10px;color:#aaa;text-align:center;line-height:1.3;max-width:60px;font-family:sans-serif}
+.wz-step-label.active{color:#0F6E56;font-weight:600}
+.wz-connector{height:1.5px;background:#ddd;flex:1;margin-bottom:20px;transition:background .3s}
+.wz-connector.done{background:#0F6E56}
+.wz-panel{background:#fff;border:1px solid #e5e3de;border-radius:16px;padding:2rem 2rem 1.5rem;box-shadow:0 2px 12px rgba(0,0,0,.04)}
+.wz-num{font-size:11px;color:#0F6E56;font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-family:sans-serif;margin-bottom:6px}
+.wz-title{font-size:22px;font-weight:400;color:#1a1a18;margin-bottom:6px;line-height:1.3}
+.wz-desc{font-size:14px;color:#666;line-height:1.7;margin-bottom:1.75rem;font-family:sans-serif}
+.wz-fields{display:flex;flex-direction:column;gap:14px}
+.wz-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.wz-field{display:flex;flex-direction:column;gap:5px}
+.wz-field label{font-size:11px;color:#888;font-weight:600;letter-spacing:.05em;text-transform:uppercase;font-family:sans-serif}
+.wz-field input,.wz-field select,.wz-field textarea{font-size:14px;padding:9px 12px;border:1px solid #ddd;border-radius:8px;background:#faf9f7;color:#1a1a18;font-family:sans-serif;width:100%;transition:border-color .15s}
+.wz-field input:focus,.wz-field select:focus,.wz-field textarea:focus{outline:none;border-color:#0F6E56;background:#fff}
+.wz-field textarea{resize:none}
+.wz-hint{font-size:11px;color:#aaa;font-family:sans-serif}
+.wz-divider{height:1px;background:#f0ede8;margin:1.5rem 0}
+.wz-slabel{font-size:11px;font-weight:700;color:#888;letter-spacing:.07em;text-transform:uppercase;font-family:sans-serif;margin-bottom:6px}
+.wz-shint{font-size:13px;color:#888;margin-bottom:10px;line-height:1.6;font-family:sans-serif}
+.wz-rgroup{display:flex;flex-direction:column;gap:8px}
+.wz-ropt{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border:1px solid #e5e3de;border-radius:10px;cursor:pointer;transition:all .15s;background:#faf9f7}
+.wz-ropt:hover{border-color:#0F6E56;background:#f5fbf8}
+.wz-ropt.selected{border-color:#0F6E56;background:#f0faf6}
+.wz-ropt input[type=radio]{margin-top:3px;accent-color:#0F6E56;flex-shrink:0}
+.wz-rl{font-size:14px;color:#1a1a18;font-weight:600;margin-bottom:3px;font-family:sans-serif}
+.wz-rs{font-size:12px;color:#888;line-height:1.5;font-family:sans-serif}
+.wz-ropt.selected .wz-rs{color:#0F6E56}
+.wz-orgrid{display:none;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px;padding:12px;background:#f5f4f1;border-radius:8px}
+.wz-orgrid.visible{display:grid}
+.wz-ortile{display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:#fff;transition:all .15s;user-select:none}
+.wz-ortile:hover{border-color:#0F6E56}
+.wz-ortile.selected{border-color:#0F6E56;background:#f0faf6}
+.wz-orchk{width:16px;height:16px;border:1px solid #ccc;border-radius:3px;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.wz-ortile.selected .wz-orchk{background:#0F6E56;border-color:#0F6E56}
+.wz-orchk svg{display:none}
+.wz-ortile.selected .wz-orchk svg{display:block}
+.wz-orname{font-size:13px;color:#1a1a18;font-family:sans-serif}
+.wz-sitgrid{display:flex;flex-direction:column;gap:8px}
+.wz-sitcard{border:1px solid #e5e3de;border-radius:10px;overflow:hidden}
+.wz-sitcard.selected{border-color:#0F6E56}
+.wz-sithdr{display:flex;align-items:center;gap:12px;padding:12px 14px;background:#faf9f7;cursor:pointer;transition:background .15s}
+.wz-sithdr:hover{background:#f5fbf8}
+.wz-sitchk{width:18px;height:18px;border:1px solid #ccc;border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:#fff}
+.wz-sitcard.selected .wz-sitchk{background:#0F6E56;border-color:#0F6E56}
+.wz-sitchk svg{display:none}
+.wz-sitcard.selected .wz-sitchk svg{display:block}
+.wz-sittitle{font-size:14px;font-weight:600;color:#1a1a18;flex:1;font-family:sans-serif}
+.wz-sitcard.selected .wz-sittitle{color:#085041}
+.wz-sittoggle{font-size:20px;color:#ccc;transition:transform .2s;user-select:none}
+.wz-sitcard.open .wz-sittoggle{transform:rotate(45deg)}
+.wz-sitbody{display:none;padding:0 14px 14px 44px}
+.wz-sitcard.open .wz-sitbody{display:block}
+.wz-sitdesc{font-size:13px;color:#888;line-height:1.6;margin-bottom:10px;font-family:sans-serif}
+.wz-sitopts{display:flex;flex-direction:column;gap:6px}
+.wz-sitopt{display:flex;align-items:flex-start;gap:10px;padding:9px 12px;border:1px solid #e5e3de;border-radius:8px;cursor:pointer;background:#faf9f7;transition:all .15s}
+.wz-sitopt:hover{border-color:#0F6E56;background:#f5fbf8}
+.wz-sitopt.chosen{border-color:#0F6E56;background:#f0faf6}
+.wz-sitopt.neutral{border-style:dashed}
+.wz-sitopt input[type=radio]{margin-top:2px;accent-color:#0F6E56;flex-shrink:0}
+.wz-sitopt-label{font-size:13px;color:#1a1a18;line-height:1.4;font-family:sans-serif}
+.wz-sitopt.chosen .wz-sitopt-label{color:#085041}
+.wz-sitopt.neutral .wz-sitopt-label{color:#999}
+.wz-cblock{margin-bottom:1rem}
+.wz-chdr{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.wz-cav{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;font-family:sans-serif}
+.av-g{background:#E1F5EE;color:#085041}
+.av-m{background:#f0ede8;color:#999}
+.wz-cname{font-size:14px;font-weight:600;color:#1a1a18;font-family:sans-serif}
+.wz-csub{font-size:12px;color:#999;font-family:sans-serif}
+.wz-badge{font-size:11px;padding:2px 8px;border-radius:20px;font-family:sans-serif}
+.wz-badge.req{background:#E1F5EE;color:#085041}
+.wz-badge.opt{background:#f0ede8;color:#999}
+.wz-ccard{border:1px solid #e5e3de;border-radius:10px;padding:1rem;background:#faf9f7}
+.wz-vrow{display:flex;align-items:center;gap:8px;margin-top:10px;padding:9px 11px;border:1px solid #e5e3de;border-radius:8px;background:#fff;cursor:pointer;transition:all .15s}
+.wz-vrow:hover{border-color:#0F6E56}
+.wz-vrow.checked{border-color:#0F6E56;background:#f0faf6}
+.wz-vchk{width:16px;height:16px;border:1px solid #ccc;border-radius:3px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:#fff}
+.wz-vrow.checked .wz-vchk{background:#0F6E56;border-color:#0F6E56}
+.wz-vchk svg{display:none}
+.wz-vrow.checked .wz-vchk svg{display:block}
+.wz-vlabel{font-size:13px;color:#1a1a18;flex:1;font-family:sans-serif}
+.wz-vrow.checked .wz-vlabel{color:#085041}
+.wz-vhint{font-size:11px;color:#aaa;font-family:sans-serif}
+.wz-dw{margin-top:1.5rem}
+.wz-news{border:1px solid #e5e3de;border-radius:12px;overflow:hidden;margin-bottom:1rem}
+.wz-news-hdr{display:flex;align-items:center;gap:8px;padding:8px 14px;background:#faf9f7;border-bottom:1px solid #e5e3de}
+.wz-news-dot{width:6px;height:6px;border-radius:50%;background:#E24B4A;flex-shrink:0}
+.wz-news-src{font-size:11px;font-weight:700;color:#aaa;letter-spacing:.05em;font-family:sans-serif}
+.wz-news-body{padding:12px 14px}
+.wz-news-title{font-size:14px;font-weight:700;color:#1a1a18;line-height:1.4;margin-bottom:6px;font-family:sans-serif}
+.wz-news-text{font-size:13px;color:#888;line-height:1.6;font-family:sans-serif}
+.wz-news-link{font-size:12px;color:#0F6E56;margin-top:8px;display:inline-block;font-family:sans-serif}
+.wz-dwbox{border:1.5px solid #0F6E56;border-radius:12px;overflow:hidden}
+.wz-dwhdr{display:flex;align-items:center;gap:10px;padding:12px 14px;background:#E1F5EE;border-bottom:1px solid #9FE1CB}
+.wz-dwico{width:28px;height:28px;background:#0F6E56;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.wz-dwt{font-size:14px;font-weight:700;color:#085041;font-family:sans-serif}
+.wz-dws{font-size:12px;color:#0F6E56;font-family:sans-serif}
+.wz-dwbd{padding:14px;background:#fff}
+.wz-dwintro{font-size:13px;color:#888;line-height:1.6;margin-bottom:10px;font-family:sans-serif}
+.wz-dwhint{font-size:12px;color:#aaa;margin-bottom:10px;font-family:sans-serif}
+.wz-dwrow{display:flex;align-items:flex-start;gap:12px;padding:11px 13px;border:1px solid #e5e3de;border-radius:8px;cursor:pointer;margin-bottom:8px;transition:all .15s;background:#faf9f7}
+.wz-dwrow:hover{border-color:#0F6E56;background:#f5fbf8}
+.wz-dwrow.checked{border-color:#0F6E56;background:#f0faf6}
+.wz-dwrow.nein{border-style:dashed}
+.wz-dwrow.nein.checked{border-color:#E24B4A;background:#fff5f5;border-style:solid}
+.wz-dwchk{width:18px;height:18px;border:1px solid #ccc;border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;background:#fff}
+.wz-dwrow.checked .wz-dwchk{background:#0F6E56;border-color:#0F6E56}
+.wz-dwrow.nein.checked .wz-dwchk{background:#E24B4A;border-color:#E24B4A}
+.wz-dwchk svg{display:none}
+.wz-dwrow.checked .wz-dwchk svg{display:block}
+.wz-dwrl{font-size:14px;font-weight:700;color:#1a1a18;margin-bottom:3px;font-family:sans-serif}
+.wz-dwrow.checked .wz-dwrl{color:#085041}
+.wz-dwrow.nein.checked .wz-dwrl{color:#A32D2D}
+.wz-dwrs{font-size:12px;color:#888;line-height:1.4;font-family:sans-serif}
+.wz-dwrow.checked .wz-dwrs{color:#0F6E56}
+.wz-dwrow.nein.checked .wz-dwrs{color:#A32D2D}
+.wz-dwor{display:flex;align-items:center;gap:10px;margin:8px 0}
+.wz-dworline{flex:1;height:1px;background:#e5e3de}
+.wz-dwortext{font-size:11px;color:#aaa;font-family:sans-serif}
+.wz-dwnote{font-size:12px;color:#aaa;line-height:1.5;margin-top:10px;font-family:sans-serif}
+.wz-nsteps{border:1px solid #e5e3de;border-radius:10px;overflow:hidden;margin-top:1.25rem}
+.wz-nstitle{font-size:11px;font-weight:700;color:#888;letter-spacing:.06em;text-transform:uppercase;padding:8px 14px;background:#faf9f7;border-bottom:1px solid #e5e3de;font-family:sans-serif}
+.wz-nsrow{display:flex;align-items:flex-start;gap:12px;padding:10px 14px;border-bottom:1px solid #f0ede8}
+.wz-nsrow:last-child{border-bottom:none}
+.wz-nsnum{width:22px;height:22px;border-radius:50%;background:#E1F5EE;border:1px solid #0F6E56;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#085041;flex-shrink:0;margin-top:1px;font-family:sans-serif}
+.wz-nstext{font-size:13px;color:#1a1a18;font-family:sans-serif}
+.wz-nssub{font-size:12px;color:#aaa;margin-top:2px;font-family:sans-serif}
+.wz-stitle{font-size:10px;font-weight:700;color:#aaa;letter-spacing:.08em;text-transform:uppercase;font-family:sans-serif;margin:1.25rem 0 7px}
+.wz-cblock2{border:1px solid #e5e3de;border-radius:10px;overflow:hidden;margin-bottom:1rem}
+.wz-crow{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:9px 14px;border-bottom:1px solid #f0ede8}
+.wz-crow:last-child{border-bottom:none}
+.wz-clabel{font-size:12px;color:#999;flex-shrink:0;min-width:130px;font-family:sans-serif}
+.wz-cval{font-size:13px;color:#1a1a18;font-weight:600;text-align:right;font-family:sans-serif}
+.wz-cval.muted{font-weight:400;color:#bbb;font-style:italic}
+.wz-editbtn{font-size:11px;color:#0F6E56;cursor:pointer;background:none;border:none;padding:0 0 0 6px;font-family:sans-serif}
+.wz-tag{display:inline-block;font-size:11px;background:#E1F5EE;color:#085041;padding:2px 7px;border-radius:20px;margin:2px 2px 0 0;font-family:sans-serif}
+.wz-prow{display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid #f0ede8}
+.wz-prow:last-child{border-bottom:none}
+.wz-pav{width:28px;height:28px;border-radius:50%;background:#E1F5EE;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#085041;flex-shrink:0;font-family:sans-serif}
+.wz-pav.gray{background:#f0ede8;color:#999}
+.wz-pname{font-size:13px;font-weight:600;color:#1a1a18;font-family:sans-serif}
+.wz-prole{font-size:12px;color:#aaa;font-family:sans-serif}
+.wz-ptag{margin-left:auto;font-size:11px;background:#E1F5EE;color:#085041;padding:2px 8px;border-radius:20px;font-family:sans-serif}
+.wz-ptag.gray{background:#f0ede8;color:#999}
+.wz-warn{padding:12px 14px;background:#fffbf0;border:1px solid #e5c84a;border-radius:10px;margin-bottom:1.25rem}
+.wz-warn-title{font-size:13px;font-weight:700;color:#7a5200;margin-bottom:3px;font-family:sans-serif}
+.wz-warn-body{font-size:12px;color:#7a5200;line-height:1.5;font-family:sans-serif}
+.wz-consent{display:flex;align-items:flex-start;gap:10px;padding:11px 14px;border:1px solid #e5e3de;border-radius:10px;cursor:pointer;margin-bottom:8px;transition:all .15s;background:#faf9f7}
+.wz-consent:hover{border-color:#0F6E56}
+.wz-consent.checked{border-color:#0F6E56;background:#f0faf6}
+.wz-cchk{width:16px;height:16px;border:1px solid #ccc;border-radius:3px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;background:#fff}
+.wz-consent.checked .wz-cchk{background:#0F6E56;border-color:#0F6E56}
+.wz-cchk svg{display:none}
+.wz-consent.checked .wz-cchk svg{display:block}
+.wz-consent-text{font-size:13px;color:#1a1a18;line-height:1.5;font-family:sans-serif}
+.wz-consent.checked .wz-consent-text{color:#085041}
+.wz-consent-sub{font-size:11px;color:#aaa;margin-top:2px;font-family:sans-serif}
+.wz-nav{display:flex;justify-content:space-between;align-items:flex-start;margin-top:1.75rem}
+.wz-back{background:transparent;border:1px solid #ddd;color:#999;padding:9px 20px;border-radius:8px;cursor:pointer;font-size:14px;font-family:sans-serif}
+.wz-back:hover{border-color:#aaa;color:#666}
+.wz-next{background:#0F6E56;border:none;color:#fff;padding:10px 26px;border-radius:8px;cursor:pointer;font-weight:700;font-size:14px;font-family:sans-serif}
+.wz-next:hover{background:#085041}
+.wz-submit{background:#0F6E56;border:none;color:#fff;padding:11px 28px;border-radius:8px;cursor:pointer;font-weight:700;font-size:15px;font-family:sans-serif;opacity:.35;pointer-events:none;transition:all .2s}
+.wz-submit.ready{opacity:1;pointer-events:all}
+.wz-submit.ready:hover{background:#085041}
+.wz-submit-hint{font-size:12px;color:#bbb;margin-top:5px;text-align:right;font-family:sans-serif}
+.wz-infoblue{background:#f0f7ff;border:1px solid #c5d9f0;border-radius:10px;padding:10px 14px;margin-bottom:1.25rem;font-size:13px;color:#2a5a8a;line-height:1.5;font-family:sans-serif}
+.wz-done{text-align:center;padding:1.5rem .5rem}
+.wz-done-icon{width:56px;height:56px;background:#E1F5EE;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem}
+.wz-done-h{font-size:22px;font-weight:400;margin-bottom:8px}
+.wz-done-sub{font-size:14px;color:#888;line-height:1.7;max-width:400px;margin:0 auto 1.75rem;font-family:sans-serif}
+.wz-vcards{display:flex;flex-direction:column;gap:10px;text-align:left}
+.wz-vcard{border:1px solid #e5e3de;border-radius:12px;overflow:hidden;cursor:pointer;transition:border-color .15s}
+.wz-vcard:hover{border-color:#aaa}
+.wz-vcard.sel{border-color:#0F6E56;border-width:1.5px}
+.wz-vcdhdr{display:flex;align-items:flex-start;gap:12px;padding:14px 16px 12px;background:#faf9f7}
+.wz-vcard.sel .wz-vcdhdr{background:#f5fbf8}
+.wz-vradio{width:18px;height:18px;border-radius:50%;border:1px solid #ccc;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;background:#fff}
+.wz-vcard.sel .wz-vradio{background:#0F6E56;border-color:#0F6E56}
+.wz-vradio svg{display:none}
+.wz-vcard.sel .wz-vradio svg{display:block}
+.wz-vcdtitle{font-size:15px;font-weight:700;color:#1a1a18;margin-bottom:3px;font-family:sans-serif}
+.wz-vcard.sel .wz-vcdtitle{color:#085041}
+.wz-vcdsub{font-size:13px;color:#888;line-height:1.5;font-family:sans-serif}
+.wz-vpill{display:inline-flex;align-items:center;gap:5px;font-size:11px;padding:3px 9px;border-radius:20px;margin-top:7px;font-family:sans-serif}
+.wz-vpill.full{background:#E1F5EE;color:#085041}
+.wz-vpill.part{background:#fffbf0;color:#7a5200}
+.wz-vcdbody{display:none;padding:12px 16px 14px 46px;border-top:1px solid #f0ede8;background:#fff}
+.wz-vcard.sel .wz-vcdbody{display:block}
+.wz-vsteps{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.wz-vstep{display:flex;align-items:flex-start;gap:10px}
+.wz-vstepnum{width:20px;height:20px;border-radius:50%;background:#E1F5EE;border:1px solid #0F6E56;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#085041;flex-shrink:0;margin-top:1px;font-family:sans-serif}
+.wz-vsteptext{font-size:13px;color:#1a1a18;font-family:sans-serif}
+.wz-vstepsub{font-size:12px;color:#aaa;margin-top:1px;font-family:sans-serif}
+.wz-dl-btn{display:inline-flex;align-items:center;gap:7px;background:#0F6E56;color:#fff;border:none;padding:10px 22px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:sans-serif}
+.wz-dl-btn:hover{background:#085041}
+.wz-recbadge{font-size:10px;background:#E1F5EE;color:#085041;padding:2px 7px;border-radius:20px;font-family:sans-serif;flex-shrink:0}
+.wz-wmini{background:#fffbf0;border:1px solid #e5c84a;border-radius:8px;padding:10px 12px;margin-top:12px}
+.wz-wmini-t{font-size:12px;font-weight:700;color:#7a5200;margin-bottom:3px;font-family:sans-serif}
+.wz-wmini-b{font-size:12px;color:#7a5200;line-height:1.5;font-family:sans-serif}
+.wz-sharelabel{font-size:11px;font-weight:700;color:#aaa;letter-spacing:.05em;text-transform:uppercase;margin-bottom:8px;font-family:sans-serif}
+.wz-sharerow{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f0ede8}
+.wz-sharerow:last-child{border-bottom:none}
+.wz-shareav{width:28px;height:28px;border-radius:50%;background:#E1F5EE;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#085041;flex-shrink:0;font-family:sans-serif}
+.wz-shareav.gray{background:#f0ede8;color:#999}
+.wz-sharename{font-size:13px;font-weight:600;color:#1a1a18;flex:1;font-family:sans-serif}
+.wz-sharerole{font-size:12px;color:#aaa;font-family:sans-serif}
+.wz-sharebtn{font-size:12px;color:#0F6E56;background:none;border:1px solid #0F6E56;padding:4px 11px;border-radius:6px;cursor:pointer;font-family:sans-serif}
+.wz-sharebtn:hover{background:#E1F5EE}
+@media(max-width:500px){body{padding:1rem .75rem 3rem}.wz-panel{padding:1.25rem}.wz-row{grid-template-columns:1fr}.wz-title{font-size:19px}.wz-step-label{display:none}.wz-vcdbody{padding:12px}}
+</style>
+</head>
+<body>
+<div class="wz-wrap">
+  <div class="wz-progress" id="wz-progress"></div>
+  <div id="wz-content"></div>
+</div>
+<script>
+(function(){
+var CHK = '<svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+var cur = 0, TOTAL = 5;
+var LABELS = ['Person','Medizin','Werte','Kontakte','Pr\u00fcfen'];
+var TITLES = ['Pers\u00f6nliche Angaben','Medizinische W\u00fcnsche','Werte \u0026 Lebensqualit\u00e4t','Vertrauenspersonen','Pr\u00fcfen \u0026 Abschicken'];
+var DESCS  = [
+  'Name und Geburtsdatum der verf\u00fcgenden Person \u2014 Pflichtangaben f\u00fcr die rechtliche G\u00fcltigkeit.',
+  'Was soll im Ernstfall gelten? Lesen Sie die Erkl\u00e4rungen \u2014 Ihre Antworten sind rechtlich verbindlich.',
+  'W\u00e4hlen Sie Situationen aus, die Sie besch\u00e4ftigen, und legen Sie Ihre Haltung fest.',
+  'Tragen Sie Personen ein, die eine Kopie Ihrer Verf\u00fcgung erhalten sollen \u2014 nach der Unterschrift.',
+  'Kontrollieren Sie Ihre Angaben. Bei Fehler einfach auf \u201eBearbeiten\u201c klicken.'
+];
+var SITS = [
+  {id:'koma',title:'Dauerhaftes Koma oder Wachkoma',desc:'Sie sind k\u00f6rperlich am Leben, zeigen aber keine bewussten Reaktionen mehr. Eine Erholung gilt als unwahrscheinlich.',name:'koma_c',opts:[{t:'Keine lebenserhaltenden Massnahmen \u2014 ich m\u00f6chte in W\u00fcrde sterben d\u00fcrfen.'},{t:'Massnahmen f\u00fcr begrenzte Zeit (z.B. 3 Monate) \u2014 danach neu beurteilen.'},{t:'Alle Massnahmen weiterf\u00fchren \u2014 so lange wie medizinisch m\u00f6glich.'},{t:'Meine Vertrauensperson soll mit dem Arzt entscheiden.'},{t:'Keine Angabe.',n:true}]},
+  {id:'demenz',title:'Fortgeschrittene Demenz',desc:'Sie erkennen Ihre Angeh\u00f6rigen nicht mehr und sind vollst\u00e4ndig auf Pflege angewiesen.',name:'demenz_c',opts:[{t:'Keine lebenserhaltenden Eingriffe \u2014 Fokus auf Wohlbefinden.'},{t:'Grundpflege ja, aber keine Intensivmedizin oder Reanimation.'},{t:'K\u00fcnstliche Ern\u00e4hrung ja, aber keine Beatmung oder Reanimation.'},{t:'Alle Massnahmen \u2014 jedes Leben hat W\u00fcrde.'},{t:'Meine Vertrauensperson soll entscheiden.'},{t:'Keine Angabe.',n:true}]},
+  {id:'endstadium',title:'Unheilbare Krankheit im Endstadium',desc:'Heilung ist nicht mehr m\u00f6glich, der Tod steht in absehbarer Zeit bevor.',name:'end_c',opts:[{t:'Palliativversorgung \u2014 Schmerzfreiheit statt Lebensverl\u00e4ngerung.'},{t:'Alle Behandlungen aussch\u00f6pfen, so lange eine Chance besteht.'},{t:'Keine Spitalaufenthalte mehr \u2014 zuhause sterben.'},{t:'Sterbehospiz statt Spital.'},{t:'Meine Vertrauensperson soll entscheiden.'},{t:'Keine Angabe.',n:true}]},
+  {id:'reanimation',title:'Herzstillstand oder Atemstillstand',desc:'Das Behandlungsteam muss sofort entscheiden ob es eine Reanimation einleitet.',name:'rea_c',opts:[{t:'Reanimation immer versuchen.'},{t:'Reanimation nur bei realistischer Aussicht auf Erholung.'},{t:'Keine Reanimation bei schwerer Grunderkrankung.'},{t:'Keine Reanimation unter keinen Umst\u00e4nden (DNR).'},{t:'Meine Vertrauensperson soll entscheiden.'},{t:'Keine Angabe.',n:true}]},
+  {id:'beatmung',title:'K\u00fcnstliche Beatmung',desc:'Eine Maschine \u00fcbernimmt die Atmung \u2014 m\u00f6glicherweise dauerhaft.',name:'beat_c',opts:[{t:'Beatmung f\u00fcr begrenzte Zeit, um die Situation zu beurteilen.'},{t:'Beatmung nur bei realistischer Aussicht auf Erholung.'},{t:'Keine dauerhafte Beatmung \u2014 Ger\u00e4t abschalten wenn keine Besserung absehbar.'},{t:'Beatmung so lange wie medizinisch m\u00f6glich.'},{t:'Meine Vertrauensperson soll entscheiden.'},{t:'Keine Angabe.',n:true}]},
+  {id:'pflegeheim',title:'Dauerhafte Pflegeheimunterbringung',desc:'Sie k\u00f6nnen nicht mehr selbst\u00e4ndig leben und m\u00fcssen dauerhaft betreut werden.',name:'pflege_c',opts:[{t:'Zuhause oder bei Angeh\u00f6rigen \u2014 so lange wie m\u00f6glich.'},{t:'Pflegeheim akzeptabel, wenn Qualit\u00e4t und N\u00e4he stimmt.'},{t:'Pflegeheim in meiner N\u00e4he bevorzugt.'},{t:'Keine Pr\u00e4ferenz \u2014 Angeh\u00f6rige sollen entscheiden.'},{t:'Meine Vertrauensperson soll entscheiden.'},{t:'Keine Angabe.',n:true}]}
+];
+
+function el(tag, cls, html) {
+  var d = document.createElement(tag);
+  if (cls) d.className = cls;
+  if (html) d.innerHTML = html;
+  return d;
+}
+function q(sel, ctx) { return (ctx||document).querySelector(sel); }
+function qa(sel, ctx) { return (ctx||document).querySelectorAll(sel); }
+
+function renderProgress() {
+  var p = document.getElementById('wz-progress');
+  p.innerHTML = '';
+  for (var i = 0; i < TOTAL; i++) {
+    if (i > 0) {
+      var conn = el('div', 'wz-connector' + (i <= cur ? ' done' : ''));
+      p.appendChild(conn);
+    }
+    var wrap = el('div', 'wz-dot-wrap');
+    wrap.dataset.step = i;
+    var dot = el('div', 'wz-dot' + (i < cur ? ' done' : i === cur ? ' active' : ''));
+    dot.textContent = i < cur ? '\u2713' : (i+1);
+    var lbl = el('div', 'wz-step-label' + (i === cur ? ' active' : ''));
+    lbl.textContent = LABELS[i];
+    wrap.appendChild(dot);
+    wrap.appendChild(lbl);
+    wrap.addEventListener('click', (function(idx){ return function(){ if(idx<=cur){cur=idx;render();} }; })(i));
+    p.appendChild(wrap);
+  }
+}
+
+function mkRopt(name, val, title, sub) {
+  var lbl = el('label', 'wz-ropt');
+  lbl.dataset.group = name;
+  var inp = document.createElement('input');
+  inp.type = 'radio'; inp.name = name; inp.value = val;
+  var div = el('div');
+  var rl = el('div', 'wz-rl'); rl.textContent = title;
+  var rs = el('div', 'wz-rs'); rs.textContent = sub;
+  div.appendChild(rl); div.appendChild(rs);
+  lbl.appendChild(inp); lbl.appendChild(div);
+  return lbl;
+}
+
+function step1() {
+  var f = el('div', 'wz-fields');
+  var r1 = el('div', 'wz-row');
+  var fn = el('div','wz-field'); fn.innerHTML = '<label>Vorname</label><input type="text" placeholder="z.B. Maria"/>';
+  var ln = el('div','wz-field'); ln.innerHTML = '<label>Nachname</label><input type="text" placeholder="z.B. M\u00fcller"/>';
+  r1.appendChild(fn); r1.appendChild(ln);
+  var r2 = el('div','wz-row');
+  var bd = el('div','wz-field'); bd.innerHTML = '<label>Geburtsdatum</label><input type="date"/>';
+  var kt = el('div','wz-field'); kt.innerHTML = '<label>Wohnkanton</label><select><option>Z\u00fcrich</option><option>Bern</option><option>Basel</option><option>Genf</option><option>Luzern</option><option>Aargau</option><option>Andere</option></select>';
+  r2.appendChild(bd); r2.appendChild(kt);
+  var em = el('div','wz-field'); em.innerHTML = '<label>E-Mail-Adresse</label><input type="email" placeholder="ihre@email.ch"/><span class="wz-hint">F\u00fcr den Erhalt des PDFs und gelegentliche Vorsorge-Tipps</span>';
+  f.appendChild(r1); f.appendChild(r2); f.appendChild(em);
+  return f;
+}
+
+function step2() {
+  var wrap = el('div');
+  var organs = ['Herz','Lunge','Leber','Nieren','Bauchspeicheldr\u00fcse','Darm','Hornhaut','Haut','Knochen'];
+
+  function addSection(labelTxt, hintTxt, ropts) {
+    var sl = el('div','wz-slabel'); sl.textContent = labelTxt; wrap.appendChild(sl);
+    var sh = el('div','wz-shint'); sh.textContent = hintTxt; wrap.appendChild(sh);
+    var rg = el('div','wz-rgroup');
+    ropts.forEach(function(o){ rg.appendChild(mkRopt(o[0],o[1],o[2],o[3])); });
+    wrap.appendChild(rg);
+  }
+
+  addSection('Lebenserhaltende Massnahmen',
+    'Massnahmen wie k\u00fcnstliche Beatmung, Reanimation oder k\u00fcnstliche Ern\u00e4hrung \u2014 alles was das Leben technisch verl\u00e4ngert, auch wenn keine Heilung m\u00f6glich ist.',
+    [['life','nein','Keine lebenserhaltenden Massnahmen','Wenn nach \u00e4rztlichem Urteil keine realistische Chance auf Erholung besteht, sollen keine lebenserhaltenden Ger\u00e4te eingesetzt werden. Schmerzlinderung bleibt selbstverst\u00e4ndlich.'],
+     ['life','ja','Alle Massnahmen aussch\u00f6pfen','Das Behandlungsteam soll alles medizinisch M\u00f6gliche tun \u2014 unabh\u00e4ngig von der Prognose.'],
+     ['life','situativ','Je nach Situation entscheiden','Meine Vertrauensperson soll gemeinsam mit dem Arzt im Ernstfall entscheiden.']]);
+
+  wrap.appendChild(el('div','wz-divider'));
+
+  addSection('Schmerzbehandlung \u0026 Palliativversorgung',
+    'Palliativversorgung: Schmerzen lindern, Leiden reduzieren und ein w\u00fcrdiges Sterben erm\u00f6glichen \u2014 auch wenn das Leben dadurch etwas verk\u00fcrzt wird.',
+    [['pain','ja','Ja, immer \u2014 auch wenn es das Leben verk\u00fcrzen k\u00f6nnte','Maximale Schmerzlinderung, selbst wenn Medikamente das Leben etwas verk\u00fcrzen. Mein Wohlbefinden steht im Vordergrund.'],
+     ['pain','basis','Nur Basisversorgung','Grundlegende Schmerzlinderung ja. Auf starke Sedativa verzichte ich lieber.']]);
+
+  wrap.appendChild(el('div','wz-divider'));
+
+  var osl = el('div','wz-slabel'); osl.textContent = 'Organspende'; wrap.appendChild(osl);
+  var osh = el('div','wz-shint'); osh.textContent = 'Seit 2024 gilt in der Schweiz die Widerspruchsregelung: Wer keine Organspende w\u00fcnscht, muss das aktiv festhalten.'; wrap.appendChild(osh);
+  var org = el('div','wz-rgroup');
+
+  org.appendChild(mkRopt('organ','ja','Ja, alle Organe und Gewebe spenden','Im Todesfall d\u00fcrfen alle geeigneten Organe und Gewebe f\u00fcr Transplantationen entnommen werden.'));
+
+  var bestLbl = el('label','wz-ropt'); bestLbl.dataset.group = 'organ';
+  var bestInp = document.createElement('input'); bestInp.type='radio'; bestInp.name='organ'; bestInp.value='bestimmte';
+  var bestDiv = el('div','',''); bestDiv.style.width='100%';
+  var bestRL = el('div','wz-rl'); bestRL.textContent = 'Nur bestimmte Organe spenden';
+  var bestRS = el('div','wz-rs'); bestRS.textContent = 'Ich w\u00e4hle selbst aus, welche Organe gespendet werden d\u00fcrfen.';
+  var grid = el('div','wz-orgrid'); grid.id = 'wz-orgrid';
+  organs.forEach(function(n){
+    var tile = el('div','wz-ortile');
+    var chk = el('div','wz-orchk'); chk.innerHTML = CHK;
+    var nm = el('span','wz-orname'); nm.textContent = n;
+    tile.appendChild(chk); tile.appendChild(nm);
+    tile.addEventListener('click', function(e){ e.stopPropagation(); tile.classList.toggle('selected'); });
+    grid.appendChild(tile);
+  });
+  bestDiv.appendChild(bestRL); bestDiv.appendChild(bestRS); bestDiv.appendChild(grid);
+  bestLbl.appendChild(bestInp); bestLbl.appendChild(bestDiv);
+  org.appendChild(bestLbl);
+  org.appendChild(mkRopt('organ','nein','Nein, keine Organspende','Ich widerspreche ausdr\u00fccklich jeder Organ- und Gewebeentnahme nach meinem Tod.'));
+  wrap.appendChild(org);
+  return wrap;
+}
+
+function step3() {
+  var wrap = el('div');
+  var hint = el('div','wz-shint'); hint.style.marginBottom='12px'; hint.textContent='Karte aufklappen um eine Haltung zu w\u00e4hlen. Mehrere Situationen m\u00f6glich.'; wrap.appendChild(hint);
+  var sg = el('div','wz-sitgrid');
+
+  SITS.forEach(function(s){
+    var card = el('div','wz-sitcard'); card.id='wz-sit-'+s.id;
+    var hdr = el('div','wz-sithdr');
+    var chk = el('div','wz-sitchk'); chk.innerHTML = CHK;
+    var title = el('div','wz-sittitle'); title.textContent = s.title;
+    var tog = el('div','wz-sittoggle'); tog.textContent = '+';
+    hdr.appendChild(chk); hdr.appendChild(title); hdr.appendChild(tog);
+    hdr.addEventListener('click', function(){ card.classList.toggle('open'); });
+
+    var body = el('div','wz-sitbody');
+    var desc = el('div','wz-sitdesc'); desc.textContent = s.desc; body.appendChild(desc);
+    var opts = el('div','wz-sitopts');
+    s.opts.forEach(function(o,i){
+      var opt = el('label','wz-sitopt'+(o.n?' neutral':'')); opt.dataset.group=s.name;
+      var inp = document.createElement('input'); inp.type='radio'; inp.name=s.name; inp.value=i;
+      var span = el('span','wz-sitopt-label'); span.textContent = o.t;
+      opt.appendChild(inp); opt.appendChild(span);
+      opt.addEventListener('click', function(){
+        qa('[data-group="'+s.name+'"]',sg).forEach(function(x){ x.classList.remove('chosen'); });
+        opt.classList.add('chosen'); inp.checked=true;
+        if(!o.n) card.classList.add('selected');
+      });
+      opts.appendChild(opt);
+    });
+    body.appendChild(opts);
+    card.appendChild(hdr); card.appendChild(body);
+    sg.appendChild(card);
+  });
+  wrap.appendChild(sg);
+  wrap.appendChild(el('div','wz-divider'));
+  var ef = el('div','wz-field');
+  var el2 = document.createElement('label'); el2.style.cssText='font-size:11px;font-weight:700;color:#888;letter-spacing:.05em;text-transform:uppercase;font-family:sans-serif;'; el2.textContent='Eigene Erg\u00e4nzungen (optional)';
+  var ta = document.createElement('textarea'); ta.rows=3; ta.placeholder='Pers\u00f6nliche W\u00fcnsche, religi\u00f6se Vorstellungen, besondere \u00c4ngste...';
+  var hint2 = el('span','wz-hint'); hint2.textContent='Dieser Text erscheint w\u00f6rtlich in Ihrer Verf\u00fcgung.';
+  ef.appendChild(el2); ef.appendChild(ta); ef.appendChild(hint2);
+  wrap.appendChild(ef);
+  return wrap;
+}
+
+function mkCcard(num, avcls, cname, csub, bcls, btxt, showV) {
+  var block = el('div','wz-cblock');
+  var hdr = el('div','wz-chdr');
+  var av = el('div','wz-cav '+avcls); av.textContent = num;
+  var meta = el('div');
+  var cn = el('div','wz-cname'); cn.textContent = cname;
+  var cs = el('div','wz-csub'); cs.textContent = csub;
+  meta.appendChild(cn); meta.appendChild(cs);
+  var badge = el('span','wz-badge '+bcls); badge.textContent = btxt;
+  hdr.appendChild(av); hdr.appendChild(meta); hdr.appendChild(badge);
+  var card = el('div','wz-ccard');
+  var r1 = el('div','wz-row'); r1.style.marginBottom='10px';
+  r1.innerHTML = '<div class="wz-field"><label>Vorname</label><input type="text" placeholder="Vorname"/></div><div class="wz-field"><label>Nachname</label><input type="text" placeholder="Nachname"/></div>';
+  var r2 = el('div','wz-row'); r2.style.marginBottom='10px';
+  r2.innerHTML = '<div class="wz-field"><label>Beziehung</label><select><option value="">Bitte w\u00e4hlen</option><option>Ehepartner/in</option><option>Lebenspartner/in</option><option>Kind</option><option>Geschwister</option><option>Elternteil</option><option>Freund/in</option><option>Andere</option></select></div><div class="wz-field"><label>Telefon (optional)</label><input type="tel" placeholder="+41 79 000 00 00"/></div>';
+  var em = el('div','wz-field');
+  em.innerHTML = '<label>E-Mail-Adresse</label><input type="email" placeholder="email@beispiel.ch"/><span class="wz-hint">Wird im Dokument aufgef\u00fchrt, nicht automatisch angeschrieben</span>';
+  card.appendChild(r1); card.appendChild(r2); card.appendChild(em);
+  if (showV) {
+    var vrow = el('div','wz-vrow');
+    var vchk = el('div','wz-vchk'); vchk.innerHTML = CHK;
+    var vlbl = el('span','wz-vlabel'); vlbl.textContent = 'Diese Person darf im Ernstfall Entscheidungen f\u00fcr mich treffen';
+    var vhint = el('span','wz-vhint'); vhint.textContent = 'Vertretung';
+    vrow.appendChild(vchk); vrow.appendChild(vlbl); vrow.appendChild(vhint);
+    vrow.addEventListener('click', function(){ vrow.classList.toggle('checked'); });
+    card.appendChild(vrow);
+  }
+  block.appendChild(hdr); block.appendChild(card);
+  return block;
+}
+
+function mkDwRow(id, label, sub, isNein) {
+  var row = el('div','wz-dwrow'+(isNein?' nein':'')); row.id=id;
+  var chk = el('div','wz-dwchk'); chk.innerHTML = CHK;
+  var div = el('div');
+  var rl = el('div','wz-dwrl'); rl.textContent = label;
+  var rs = el('div','wz-dwrs'); rs.textContent = sub;
+  div.appendChild(rl); div.appendChild(rs);
+  row.appendChild(chk); row.appendChild(div);
+  row.addEventListener('click', function(){
+    if (isNein) {
+      var wasChecked = row.classList.contains('checked');
+      row.classList.remove('checked');
+      var d1=document.getElementById('wz-dw1'), d2=document.getElementById('wz-dw2');
+      if(d1) d1.classList.remove('checked');
+      if(d2) d2.classList.remove('checked');
+      if(!wasChecked) row.classList.add('checked');
+    } else {
+      var nein = document.getElementById('wz-dw3');
+      if(nein) nein.classList.remove('checked');
+      row.classList.toggle('checked');
+    }
+  });
+  return row;
+}
+
+function step4() {
+  var wrap = el('div');
+  var info = el('div','wz-infoblue'); info.textContent='Nach dem Ausf\u00fcllen generieren wir Ihr PDF. Sie drucken es aus, unterschreiben es von Hand \u2014 und leiten die Kopien dann selbst weiter.';
+  wrap.appendChild(info);
+  wrap.appendChild(mkCcard('1','av-g','Vertrauensperson 1','Hauptansprechperson im Ernstfall','req','Pflicht',true));
+  wrap.appendChild(el('div','wz-divider'));
+  wrap.appendChild(mkCcard('2','av-m','Vertrauensperson 2','Erh\u00e4lt ebenfalls eine Kopie','opt','Optional',false));
+  wrap.appendChild(el('div','wz-divider'));
+
+  // Hausarzt block
+  var hablock = el('div','wz-cblock');
+  var hahdr = el('div','wz-chdr');
+  hahdr.innerHTML = '<div class="wz-cav av-m">+</div><div style="flex:1"><div class="wz-cname">Hausarzt / Haus\u00e4rztin</div><div class="wz-csub">Empfohlen \u2014 Praxis erh\u00e4lt eine Kopie</div></div><span class="wz-badge opt">Optional</span>';
+  var hacard = el('div','wz-ccard');
+  hacard.innerHTML = '<div class="wz-row" style="margin-bottom:10px"><div class="wz-field"><label>Name Arzt/\u00c4rztin</label><input type="text" placeholder="Dr. ..."/></div><div class="wz-field"><label>Praxisname</label><input type="text" placeholder="Praxis ..."/></div></div><div class="wz-field"><label>E-Mail Praxis</label><input type="email" placeholder="praxis@beispiel.ch"/><span class="wz-hint">Wird im Dokument aufgef\u00fchrt</span></div>';
+  hablock.appendChild(hahdr); hablock.appendChild(hacard);
+  wrap.appendChild(hablock);
+
+  // Datenweitergabe
+  var dw = el('div','wz-dw');
+  var news = el('div','wz-news');
+  news.innerHTML = '<div class="wz-news-hdr"><div class="wz-news-dot"></div><span class="wz-news-src">Bundesgericht \u00b7 Urteil April 2026</span></div><div class="wz-news-body"><div class="wz-news-title">Tochter stirbt im Spital \u2014 Mutter erf\u00e4hrt nicht warum</div><div class="wz-news-text">Eine 61-j\u00e4hrige Frau erlitt einen Schlaganfall und starb im Spital. Ihre Mutter wollte Einsicht in die Krankenakte \u2014 und wurde abgewiesen. Das Bundesgericht best\u00e4tigte: Das Arztgeheimnis sch\u00fctzt die Privatsph\u00e4re auch \u00fcber den Tod hinaus.</div><a class="wz-news-link" href="https://www.beobachter.ch" target="_blank">Zum Artikel \u2014 Beobachter.ch &#8599;</a></div>';
+  dw.appendChild(news);
+
+  var dwbox = el('div','wz-dwbox');
+  var dwhdr = el('div','wz-dwhdr');
+  dwhdr.innerHTML = '<div class="wz-dwico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><div class="wz-dwt">Datenweitergabe im Todesfall regeln</div><div class="wz-dws">Damit Ihre Angeh\u00f6rigen Auskunft erhalten d\u00fcrfen</div></div>';
+  var dwbd = el('div','wz-dwbd');
+  var dwintro = el('div','wz-dwintro'); dwintro.textContent='Ohne eine ausdr\u00fcckliche Erlaubnis darf das Spital Ihre Krankenakte nach dem Tod niemandem zeigen \u2014 auch nicht Ihrem Ehepartner oder Ihren Kindern.';
+  var dwhint = el('div','wz-dwhint'); dwhint.textContent='Mehrere Optionen m\u00f6glich \u2014 ausser \u201eNein\u201c.';
+  dwbd.appendChild(dwintro); dwbd.appendChild(dwhint);
+  dwbd.appendChild(mkDwRow('wz-dw1','Meine Vertrauenspersonen d\u00fcrfen Einsicht in meine Krankenakte erhalten','Das Spital und behandelnde \u00c4rzte sind berechtigt, den eingetragenen Vertrauenspersonen Auskunft zu erteilen \u2014 auch nach meinem Tod.',false));
+  dwbd.appendChild(mkDwRow('wz-dw2','Mein Hausarzt darf meine Daten an spezialisierte \u00c4rzte weitergeben','Falls ich bewusstlos bin, darf mein Hausarzt relevante medizinische Informationen an das behandelnde Spital weitergeben.',false));
+  var dwor = el('div','wz-dwor'); dwor.innerHTML='<div class="wz-dworline"></div><div class="wz-dwortext">oder</div><div class="wz-dworline"></div>';
+  dwbd.appendChild(dwor);
+  dwbd.appendChild(mkDwRow('wz-dw3','Nein \u2014 ich m\u00f6chte keine Datenweitergabe erlauben','Das Arztgeheimnis gilt vollumf\u00e4nglich. Keine Person erh\u00e4lt Einsicht in meine Krankenakte.',true));
+  var dwnote = el('div','wz-dwnote'); dwnote.textContent='Diese Angaben erscheinen als separater Abschnitt in Ihrer Verf\u00fcgung.';
+  dwbd.appendChild(dwnote);
+  dwbox.appendChild(dwhdr); dwbox.appendChild(dwbd);
+  dw.appendChild(dwbox);
+  wrap.appendChild(dw);
+
+  var ns = el('div','wz-nsteps'); ns.style.marginTop='1.25rem';
+  ns.innerHTML = '<div class="wz-nstitle">Was passiert nach dem Ausf\u00fcllen?</div><div class="wz-nsrow"><div class="wz-nsnum">1</div><div><div class="wz-nstext">PDF herunterladen</div></div></div><div class="wz-nsrow"><div class="wz-nsnum">2</div><div><div class="wz-nstext">Ausdrucken, datieren &amp; unterschreiben</div><div class="wz-nssub">ZGB Art. 371</div></div></div><div class="wz-nsrow"><div class="wz-nsnum">3</div><div><div class="wz-nstext">Kopien weiterleiten</div></div></div><div class="wz-nsrow"><div class="wz-nsnum">4</div><div><div class="wz-nstext">Original sicher aufbewahren</div></div></div>';
+  wrap.appendChild(ns);
+  return wrap;
+}
+
+function step5() {
+  var wrap = el('div');
+  var st = function(t){ var d=el('div','wz-stitle'); d.textContent=t; return d; };
+  var cr = function(l,v){ var d=el('div','wz-crow'); d.innerHTML='<span class="wz-clabel">'+l+'</span><span class="wz-cval">'+v+'</span>'; return d; };
+
+  wrap.appendChild(st('Pers\u00f6nliche Angaben'));
+  var b1=el('div','wz-cblock2');
+  var e1btn=el('button','wz-editbtn'); e1btn.textContent='Bearbeiten'; e1btn.addEventListener('click',function(){cur=0;render();});
+  var r1=el('div','wz-crow'); r1.innerHTML='<span class="wz-clabel">Name</span>'; var rv1=el('span','wz-cval'); rv1.textContent='Maria M\u00fcller '; rv1.appendChild(e1btn); r1.appendChild(rv1);
+  b1.appendChild(r1); b1.appendChild(cr('Geburtsdatum','12.03.1958')); b1.appendChild(cr('Kanton','Z\u00fcrich')); b1.appendChild(cr('E-Mail','maria@gmail.com'));
+  wrap.appendChild(b1);
+
+  wrap.appendChild(st('Medizinische W\u00fcnsche'));
+  var b2=el('div','wz-cblock2');
+  var e2btn=el('button','wz-editbtn'); e2btn.textContent='Bearbeiten'; e2btn.addEventListener('click',function(){cur=1;render();});
+  var r2=el('div','wz-crow'); r2.innerHTML='<span class="wz-clabel">Lebenserhaltung</span>'; var rv2=el('span','wz-cval'); rv2.textContent='Keine '; rv2.appendChild(e2btn); r2.appendChild(rv2);
+  b2.appendChild(r2); b2.appendChild(cr('Schmerzbehandlung','Ja, immer')); b2.appendChild(cr('Organspende','Ja, alle Organe'));
+  wrap.appendChild(b2);
+
+  wrap.appendChild(st('Situationen \u0026 Werte'));
+  var b3=el('div','wz-cblock2');
+  var r3=el('div','wz-crow'); r3.innerHTML='<span class="wz-clabel">Situationen</span>'; var rv3=el('span','wz-cval'); ['Koma','Demenz','Reanimation'].forEach(function(t){ var tg=el('span','wz-tag'); tg.textContent=t; rv3.appendChild(tg); }); r3.appendChild(rv3);
+  b3.appendChild(r3); b3.appendChild(cr('Erg\u00e4nzung','<span class="muted">Keine Angabe</span>'));
+  wrap.appendChild(b3);
+
+  wrap.appendChild(st('Vertrauenspersonen'));
+  var b4=el('div','wz-cblock2');
+  b4.innerHTML='<div class="wz-prow"><div class="wz-pav">TM</div><div><div class="wz-pname">Thomas M\u00fcller</div><div class="wz-prole">Ehemann</div></div><span class="wz-ptag">Vertretung</span></div><div class="wz-prow"><div class="wz-pav gray">SB</div><div><div class="wz-pname">Dr. Sabine Bauer</div><div class="wz-prole">Haus\u00e4rztin</div></div><span class="wz-ptag gray">Kopie</span></div>';
+  wrap.appendChild(b4);
+
+  wrap.appendChild(st('Datenweitergabe'));
+  var b5=el('div','wz-cblock2');
+  b5.appendChild(cr('Krankenakte','Vertrauenspersonen d\u00fcrfen Einsicht erhalten'));
+  b5.appendChild(cr('Hausarzt','Darf Daten weiterleiten'));
+  wrap.appendChild(b5);
+
+  var warn=el('div','wz-warn'); warn.innerHTML='<div class="wz-warn-title">Wichtig \u2014 nach dem Download</div><div class="wz-warn-body">Das PDF muss ausgedruckt, handschriftlich datiert und unterschrieben werden. Erst dann ist Ihre Verf\u00fcgung rechtsg\u00fcltig (ZGB Art. 371).</div>';
+  wrap.appendChild(warn);
+
+  wrap.appendChild(st('Best\u00e4tigung'));
+  var c1=el('div','wz-consent'); c1.id='wz-c1';
+  var c1chk=el('div','wz-cchk'); c1chk.innerHTML=CHK;
+  var c1txt=el('div'); c1txt.innerHTML='<div class="wz-consent-text">Ich best\u00e4tige, dass diese Angaben meinem freien Willen entsprechen und ich zum jetzigen Zeitpunkt urteilsf\u00e4hig bin.</div>';
+  c1.appendChild(c1chk); c1.appendChild(c1txt);
+  c1.addEventListener('click', function(){ c1.classList.toggle('checked'); checkReady(); });
+  wrap.appendChild(c1);
+
+  var c2=el('div','wz-consent'); c2.id='wz-c2';
+  var c2chk=el('div','wz-cchk'); c2chk.innerHTML=CHK;
+  var c2txt=el('div'); c2txt.innerHTML='<div class="wz-consent-text">Ich bin einverstanden, gelegentliche Vorsorge-Tipps und einen j\u00e4hrlichen Erinnerungs-Newsletter per E-Mail zu erhalten.</div><div class="wz-consent-sub">Kein Spam. Jederzeit abmeldbar. Wir speichern nur Name, E-Mail und Erstellungsdatum \u2014 kein medizinischer Inhalt.</div>';
+  c2.appendChild(c2chk); c2.appendChild(c2txt);
+  c2.addEventListener('click', function(){ c2.classList.toggle('checked'); checkReady(); });
+  wrap.appendChild(c2);
+
+  return wrap;
+}
+
+function checkReady() {
+  var btn = document.getElementById('wz-submit');
+  var hint = document.getElementById('wz-submit-hint');
+  if (!btn) return;
+  var c1 = document.getElementById('wz-c1');
+  var c2 = document.getElementById('wz-c2');
+  var ok = c1 && c1.classList.contains('checked') && c2 && c2.classList.contains('checked');
+  btn.classList.toggle('ready', ok);
+  if (hint) hint.style.display = ok ? 'none' : 'block';
+}
+
+function renderDone() {
+  var content = document.getElementById('wz-content');
+  content.innerHTML = '';
+  var panel = el('div','wz-panel');
+  var done = el('div','wz-done');
+  done.innerHTML = '<div class="wz-done-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#0F6E56" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="wz-done-h">Ihre Verf\u00fcgung ist bereit</div><div class="wz-done-sub">Das PDF wurde generiert. Wie m\u00f6chten Sie weiter vorgehen?</div>';
+
+  var vcards = el('div','wz-vcards');
+
+  function mkVcard(id, title, sub, pill, pillClass, bodyHTML, first) {
+    var card = el('div','wz-vcard'+(first?' sel':''));
+    var hdr = el('div','wz-vcdhdr');
+    var radio = el('div','wz-vradio'); radio.innerHTML='<svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3" fill="#fff"/></svg>';
+    var meta = el('div'); meta.style.flex='1';
+    var titleEl = el('div','wz-vcdtitle'); titleEl.textContent = title;
+    var subEl = el('div','wz-vcdsub'); subEl.textContent = sub;
+    var pillEl = el('div','wz-vpill '+pillClass); pillEl.innerHTML = pill;
+    meta.appendChild(titleEl); meta.appendChild(subEl); meta.appendChild(pillEl);
+    hdr.appendChild(radio); hdr.appendChild(meta);
+    var body = el('div','wz-vcdbody'); body.innerHTML = bodyHTML;
+    card.appendChild(hdr); card.appendChild(body);
+    card.addEventListener('click', function(){
+      qa('.wz-vcard',vcards).forEach(function(c){ c.classList.remove('sel'); });
+      card.classList.add('sel');
+    });
+    return card;
+  }
+
+  vcards.appendChild(mkVcard('vc1','Ausdrucken \u0026 unterschreiben','Klassischer Weg \u2014 kein Setup, funktioniert immer.',
+    '<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2 2 4-4" stroke="#085041" stroke-width="1.5" stroke-linecap="round"/></svg> Vollst\u00e4ndig rechtsg\u00fcltig \u2014 \u00c4rzte sind verpflichtet, sich daran zu halten','full',
+    '<div class="wz-vsteps"><div class="wz-vstep"><div class="wz-vstepnum">1</div><div class="wz-vsteptext">PDF herunterladen und ausdrucken</div></div><div class="wz-vstep"><div class="wz-vstepnum">2</div><div><div class="wz-vsteptext">Datum setzen und von Hand unterschreiben</div><div class="wz-vstepsub">Erst mit Ihrer Unterschrift gilt das Dokument rechtlich</div></div></div><div class="wz-vstep"><div class="wz-vstepnum">3</div><div class="wz-vsteptext">Kopien pers\u00f6nlich oder per Post weiterleiten</div></div></div><button class="wz-dl-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 3v13M7 11l5 5 5-5M4 20h16" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>PDF herunterladen</button>',
+    true));
+
+  vcards.appendChild(mkVcard('vc2','Online unterschreiben mit SwissID','Kein Ausdrucken n\u00f6tig \u2014 alles bleibt digital.',
+    '<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2 2 4-4" stroke="#085041" stroke-width="1.5" stroke-linecap="round"/></svg> Vollst\u00e4ndig rechtsg\u00fcltig \u2014 digitale Signatur gleichgestellt','full',
+    '<div class="wz-vsteps"><div class="wz-vstep"><div class="wz-vstepnum">1</div><div><div class="wz-vsteptext">SwissID App \u00f6ffnen</div><div class="wz-vstepsub">Setup ca. 10 Min. auf swissid.ch</div></div></div><div class="wz-vstep"><div class="wz-vstepnum">2</div><div class="wz-vsteptext">Dokument erscheint automatisch zur Signatur</div></div><div class="wz-vstep"><div class="wz-vstepnum">3</div><div class="wz-vsteptext">Signiert \u2014 fertig. Kein Ausdrucken n\u00f6tig.</div></div></div><button class="wz-dl-btn">Mit SwissID unterschreiben</button>',
+    false));
+
+  vcards.appendChild(mkVcard('vc3','Jetzt nur teilen \u2014 Unterschrift sp\u00e4ter','Vertrauenspersonen erhalten das Dokument und kennen Ihre W\u00fcnsche.',
+    '<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M5 2v4M5 7.5v.5" stroke="#7a5200" stroke-width="1.5" stroke-linecap="round"/></svg> Noch nicht unterschrieben \u2014 Unterschrift folgt sp\u00e4ter','part',
+    '<div class="wz-infoblue" style="margin-bottom:12px">\u00c4rzte ber\u00fccksichtigen Ihre Wertvorstellungen \u2014 sie sind aber erst nach Ihrer Unterschrift verpflichtet, sich daran zu halten.</div><div class="wz-sharelabel">PDF wird jetzt gesendet an:</div><div class="wz-sharerow"><div class="wz-shareav">TM</div><div><div class="wz-sharename">Thomas M\u00fcller</div><div class="wz-sharerole">Ehemann \u00b7 Vertretung</div></div><button class="wz-sharebtn">Senden</button></div><div class="wz-sharerow"><div class="wz-shareav gray">SB</div><div><div class="wz-sharename">Dr. Sabine Bauer</div><div class="wz-sharerole">Haus\u00e4rztin</div></div><button class="wz-sharebtn">Senden</button></div><div class="wz-wmini"><div class="wz-wmini-t">Erinnerung in 14 Tagen</div><div class="wz-wmini-b">Wir schicken Ihnen eine E-Mail \u2014 damit Sie die Unterschrift nachholen k\u00f6nnen.</div></div>',
+    false));
+
+  done.appendChild(vcards);
+  panel.appendChild(done);
+  content.appendChild(panel);
+}
+
+function bindRadios(ctx) {
+  qa('.wz-ropt', ctx).forEach(function(opt){
+    opt.addEventListener('click', function(){
+      var g = opt.dataset.group;
+      qa('[data-group="'+g+'"]', ctx).forEach(function(x){ x.classList.remove('selected'); var inp=x.querySelector('input[type=radio]'); if(inp) inp.checked=false; });
+      opt.classList.add('selected');
+      var inp = opt.querySelector('input[type=radio]');
+      if(inp) inp.checked = true;
+      var grid = document.getElementById('wz-orgrid');
+      if(grid && g==='organ') grid.classList.toggle('visible', inp && inp.value==='bestimmte');
+    });
+  });
+}
+
+function render() {
+  renderProgress();
+  if (cur === TOTAL) { renderDone(); return; }
+  var content = document.getElementById('wz-content');
+  content.innerHTML = '';
+  var panel = el('div','wz-panel');
+  var num = el('div','wz-num'); num.textContent = 'Schritt '+(cur+1)+' von '+TOTAL;
+  var title = el('div','wz-title'); title.textContent = TITLES[cur];
+  var desc = el('div','wz-desc'); desc.textContent = DESCS[cur];
+  panel.appendChild(num); panel.appendChild(title); panel.appendChild(desc);
+
+  var body = [step1,step2,step3,step4,step5][cur]();
+  panel.appendChild(body);
+  bindRadios(panel);
+
+  var nav = el('div','wz-nav');
+  if (cur > 0) {
+    var back = el('button','wz-back'); back.textContent = 'Zur\u00fcck';
+    back.addEventListener('click', function(){ cur--; render(); });
+    nav.appendChild(back);
+  } else {
+    nav.appendChild(el('span'));
+  }
+
+  if (cur < TOTAL - 1) {
+    var next = el('button','wz-next'); next.textContent = 'Weiter';
+    next.addEventListener('click', function(){ cur++; render(); });
+    nav.appendChild(next);
+  } else {
+    var submitWrap = el('div');
+    var submit = el('button','wz-submit'); submit.id='wz-submit'; submit.textContent = 'PDF generieren';
+    submit.addEventListener('click', function(){ if(submit.classList.contains('ready')){ cur=TOTAL; render(); } });
+    var hint = el('div','wz-submit-hint'); hint.id='wz-submit-hint'; hint.textContent='Bitte beide Felder best\u00e4tigen';
+    submitWrap.appendChild(submit); submitWrap.appendChild(hint);
+    nav.appendChild(submitWrap);
+  }
+  panel.appendChild(nav);
+  content.appendChild(panel);
+}
+
+render();
+})();
+</script>
+</body>
+</html>
