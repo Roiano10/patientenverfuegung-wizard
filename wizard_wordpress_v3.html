@@ -643,6 +643,79 @@ function bindRadios(ctx) {
   });
 }
 
+function showError(msg) {
+  var existing = document.getElementById('wz-error');
+  if (existing) existing.remove();
+  var err = el('div','');
+  err.id = 'wz-error';
+  err.style.cssText = 'background:#FCEBEB;border:1px solid #E24B4A;border-radius:8px;padding:10px 14px;margin-top:12px;font-size:13px;color:#A32D2D;font-family:sans-serif;line-height:1.5;';
+  err.textContent = msg;
+  var nav = document.querySelector('.wz-nav');
+  if (nav) nav.parentNode.insertBefore(err, nav);
+  err.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+function validateStep(step) {
+  var panel = document.getElementById('wz-content');
+
+  if (step === 0) {
+    var inputs = panel.querySelectorAll('input[type=text], input[type=email], input[type=date]');
+    for (var i = 0; i < inputs.length; i++) {
+      if (!inputs[i].value.trim()) {
+        showError('Bitte f\u00fcllen Sie alle Pflichtfelder aus.');
+        inputs[i].focus();
+        inputs[i].style.borderColor = '#E24B4A';
+        return false;
+      }
+      inputs[i].style.borderColor = '';
+    }
+    var email = panel.querySelector('input[type=email]');
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
+      showError('Bitte geben Sie eine g\u00fcltige E-Mail-Adresse ein.');
+      email.focus();
+      email.style.borderColor = '#E24B4A';
+      return false;
+    }
+  }
+
+  if (step === 1) {
+    var groups = ['life','pain','organ'];
+    for (var g = 0; g < groups.length; g++) {
+      var checked = panel.querySelector('input[name="'+groups[g]+'"]:checked');
+      if (!checked) {
+        var labels = {'life':'Lebenserhaltende Massnahmen','pain':'Schmerzbehandlung','organ':'Organspende'};
+        showError('Bitte w\u00e4hlen Sie eine Option f\u00fcr: ' + labels[groups[g]]);
+        return false;
+      }
+      if (checked.value === 'bestimmte') {
+        var anyOrgan = panel.querySelector('.wz-ortile.selected');
+        if (!anyOrgan) {
+          showError('Bitte w\u00e4hlen Sie mindestens ein Organ aus.');
+          return false;
+        }
+      }
+    }
+  }
+
+  if (step === 3) {
+    var vp1fields = panel.querySelectorAll('.wz-cblock:first-of-type input[type=text]');
+    var filled = false;
+    vp1fields.forEach(function(f){ if(f.value.trim()) filled = true; });
+    var emailVP = panel.querySelector('.wz-cblock:first-of-type input[type=email]');
+    if (!filled || !emailVP || !emailVP.value.trim()) {
+      showError('Bitte f\u00fcllen Sie mindestens Vertrauensperson 1 mit Name und E-Mail aus.');
+      return false;
+    }
+    if (emailVP && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVP.value)) {
+      showError('Bitte geben Sie eine g\u00fcltige E-Mail f\u00fcr Vertrauensperson 1 ein.');
+      emailVP.style.borderColor = '#E24B4A';
+      return false;
+    }
+  }
+
+  return true;
+}
+
 function render() {
   renderProgress();
   if (cur === TOTAL) { renderDone(); return; }
@@ -669,7 +742,12 @@ function render() {
 
   if (cur < TOTAL - 1) {
     var next = el('button','wz-next'); next.textContent = 'Weiter';
-    next.addEventListener('click', function(){ cur++; render(); });
+    next.addEventListener('click', function(){
+      var err = document.getElementById('wz-error');
+      if (err) err.remove();
+      if (!validateStep(cur)) return;
+      cur++; render();
+    });
     nav.appendChild(next);
   } else {
     var submitWrap = el('div');
