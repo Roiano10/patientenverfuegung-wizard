@@ -1,13 +1,8 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Patientenverfügung kostenlos erstellen</title>
 <style>
+
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Georgia,serif;background:#f8f7f4;color:#1a1a18;padding:2rem 1rem 4rem}
-.wz-wrap{max-width:680px;margin:0 auto}
+body.wz-active{font-family:Georgia,serif;color:#1a1a18}
+.wz-wrap{max-width:680px;margin:0 auto;padding-top:2rem}
 .wz-progress{display:flex;align-items:center;margin-bottom:2rem}
 .wz-dot-wrap{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;cursor:pointer}
 .wz-dot{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;border:1.5px solid #ccc;background:#fff;color:#999;transition:all .2s;font-family:sans-serif}
@@ -223,34 +218,54 @@ body{font-family:Georgia,serif;background:#f8f7f4;color:#1a1a18;padding:2rem 1re
 .wz-sharebtn{font-size:12px;color:#0F6E56;background:none;border:1px solid #0F6E56;padding:4px 11px;border-radius:6px;cursor:pointer;font-family:sans-serif}
 .wz-sharebtn:hover{background:#E1F5EE}
 @media(max-width:500px){body{padding:1rem .75rem 3rem}.wz-panel{padding:1.25rem}.wz-row{grid-template-columns:1fr}.wz-title{font-size:19px}.wz-step-label{display:none}.wz-vcdbody{padding:12px}}
+
+
+/* Language tabs */
+.wz-lang-bar{display:flex;gap:4px;justify-content:center;margin-bottom:1.5rem}
+.wz-lang-btn{padding:6px 20px;border:1px solid #e5e3de;border-radius:20px;cursor:pointer;font-size:13px;font-weight:600;font-family:sans-serif;background:#fff;color:#888;transition:all .15s}
+.wz-lang-btn:hover{border-color:#0F6E56;color:#0F6E56}
+.wz-lang-btn.active{background:#0F6E56;border-color:#0F6E56;color:#fff}
 </style>
-</head>
-<body>
+
 <div class="wz-wrap">
+  <div class="wz-lang-bar" id="wz-lang-bar">
+    <button class="wz-lang-btn" data-lang="de">DE</button>
+    <button class="wz-lang-btn" data-lang="fr">FR</button>
+    <button class="wz-lang-btn" data-lang="en">EN</button>
+  </div>
   <div class="wz-progress" id="wz-progress"></div>
   <div id="wz-content"></div>
 </div>
+
 <script>
+var WZ_TRANSLATIONS = {"de": {"labels": ["Person", "Medizin", "Werte", "Kontakte", "Prüfen"], "titles": ["Persönliche Angaben", "Medizinische Wünsche", "Werte & Lebensqualität", "Vertrauenspersonen", "Prüfen & Abschicken"], "descs": ["Name und Geburtsdatum der verfügenden Person — Pflichtangaben für die rechtliche Gültigkeit.", "Was soll im Ernstfall gelten? Lesen Sie die Erklärungen — Ihre Antworten sind rechtlich verbindlich.", "Wählen Sie Situationen aus, die Sie beschäftigen, und legen Sie Ihre Haltung fest.", "Tragen Sie Personen ein, die eine Kopie Ihrer Verfügung erhalten sollen — nach der Unterschrift.", "Kontrollieren Sie Ihre Angaben. Bei Fehler einfach auf \"Bearbeiten\" klicken."], "btn_next": "Weiter", "btn_back": "Zurück", "btn_submit": "PDF generieren", "submit_hint": "Bitte beide Felder bestätigen", "canton_label": "Wohnkanton", "cantons": ["Zürich", "Bern", "Basel", "Genf", "Luzern", "Aargau", "Andere"], "firstname": "Vorname", "lastname": "Nachname", "birthdate": "Geburtsdatum", "email_label": "E-Mail-Adresse", "email_hint": "Für den Erhalt des PDFs und gelegentliche Vorsorge-Tipps", "email_ph": "ihre@email.ch", "sl1": "Lebenserhaltende Massnahmen", "sh1": "Massnahmen wie künstliche Beatmung, Reanimation oder künstliche Ernährung — alles was das Leben technisch verlängert, auch wenn keine Heilung möglich ist.", "life_opts": [["nein", "Keine lebenserhaltenden Massnahmen", "Wenn nach ärztlichem Urteil keine realistische Chance auf Erholung besteht, sollen keine lebenserhaltenden Geräte eingesetzt werden. Schmerzlinderung bleibt selbstverständlich."], ["ja", "Alle Massnahmen ausschöpfen", "Das Behandlungsteam soll alles medizinisch Mögliche tun — unabhängig von der Prognose."], ["situativ", "Je nach Situation entscheiden", "Meine Vertrauensperson soll gemeinsam mit dem Arzt im Ernstfall entscheiden."]], "sl2": "Schmerzbehandlung & Palliativversorgung", "sh2": "Palliativversorgung: Schmerzen lindern, Leiden reduzieren und ein würdiges Sterben ermöglichen — auch wenn das Leben dadurch etwas verkürzt wird.", "pain_opts": [["ja", "Ja, immer — auch wenn es das Leben verkürzen könnte", "Maximale Schmerzlinderung, selbst wenn Medikamente das Leben etwas verkürzen. Mein Wohlbefinden steht im Vordergrund."], ["basis", "Nur Basisversorgung", "Grundlegende Schmerzlinderung ja. Auf starke Sedativa verzichte ich lieber."]], "sl3": "Organspende", "sh3": "Seit 2024 gilt in der Schweiz die Widerspruchsregelung: Wer keine Organspende wünscht, muss das aktiv festhalten.", "organ_opts": [["ja", "Ja, alle Organe und Gewebe spenden", "Im Todesfall dürfen alle geeigneten Organe und Gewebe für Transplantationen entnommen werden."], ["bestimmte", "Nur bestimmte Organe spenden", "Ich wähle selbst aus, welche Organe gespendet werden dürfen."], ["nein", "Nein, keine Organspende", "Ich widerspreche ausdrücklich jeder Organ- und Gewebeentnahme nach meinem Tod."]], "organs": ["Herz", "Lunge", "Leber", "Nieren", "Bauchspeicheldrüse", "Darm", "Hornhaut", "Haut", "Knochen"], "sit_hint": "Karte aufklappen um eine Haltung zu wählen. Mehrere Situationen möglich.", "extra_label": "Eigene Ergänzungen (optional)", "extra_ph": "Persönliche Wünsche, religiöse Vorstellungen, besondere Ängste...", "extra_hint": "Dieser Text erscheint wörtlich in Ihrer Verfügung.", "sits": [["koma", "Dauerhaftes Koma oder Wachkoma", "Sie sind körperlich am Leben, zeigen aber keine bewussten Reaktionen mehr. Eine Erholung gilt als unwahrscheinlich.", ["Keine lebenserhaltenden Massnahmen — ich möchte in Würde sterben dürfen.", "Massnahmen für begrenzte Zeit (z.B. 3 Monate) — danach neu beurteilen.", "Alle Massnahmen weiterführen — so lange wie medizinisch möglich.", "Meine Vertrauensperson soll mit dem Arzt entscheiden.", "Keine Angabe."]], ["demenz", "Fortgeschrittene Demenz", "Sie erkennen Ihre Angehörigen nicht mehr und sind vollständig auf Pflege angewiesen.", ["Keine lebenserhaltenden Eingriffe — Fokus auf Wohlbefinden.", "Grundpflege ja, aber keine Intensivmedizin oder Reanimation.", "Künstliche Ernährung ja, aber keine Beatmung oder Reanimation.", "Alle Massnahmen — jedes Leben hat Würde.", "Meine Vertrauensperson soll entscheiden.", "Keine Angabe."]], ["endstadium", "Unheilbare Krankheit im Endstadium", "Heilung ist nicht mehr möglich, der Tod steht in absehbarer Zeit bevor.", ["Palliativversorgung — Schmerzfreiheit statt Lebensverlängerung.", "Alle Behandlungen ausschöpfen, so lange eine Chance besteht.", "Keine Spitalaufenthalte mehr — zuhause sterben.", "Sterbehospiz statt Spital.", "Meine Vertrauensperson soll entscheiden.", "Keine Angabe."]], ["reanimation", "Herzstillstand oder Atemstillstand", "Das Behandlungsteam muss sofort entscheiden ob es eine Reanimation einleitet.", ["Reanimation immer versuchen.", "Reanimation nur bei realistischer Aussicht auf Erholung.", "Keine Reanimation bei schwerer Grunderkrankung.", "Keine Reanimation unter keinen Umständen (DNR).", "Meine Vertrauensperson soll entscheiden.", "Keine Angabe."]], ["beatmung", "Künstliche Beatmung", "Eine Maschine übernimmt die Atmung — möglicherweise dauerhaft.", ["Beatmung für begrenzte Zeit, um die Situation zu beurteilen.", "Beatmung nur bei realistischer Aussicht auf Erholung.", "Keine dauerhafte Beatmung — Gerät abschalten wenn keine Besserung absehbar.", "Beatmung so lange wie medizinisch möglich.", "Meine Vertrauensperson soll entscheiden.", "Keine Angabe."]], ["pflegeheim", "Dauerhafte Pflegeheimunterbringung", "Sie können nicht mehr selbständig leben und müssen dauerhaft betreut werden.", ["Zuhause oder bei Angehörigen — so lange wie möglich.", "Pflegeheim akzeptabel, wenn Qualität und Nähe stimmt.", "Pflegeheim in meiner Nähe bevorzugt.", "Keine Präferenz — Angehörige sollen entscheiden.", "Meine Vertrauensperson soll entscheiden.", "Keine Angabe."]]], "info_blue": "Nach dem Ausfüllen generieren wir Ihr PDF. Sie drucken es aus, unterschreiben es von Hand — und leiten die Kopien dann selbst weiter.", "vp1_name": "Vertrauensperson 1", "vp1_sub": "Hauptansprechperson im Ernstfall", "vp1_badge": "Pflicht", "vp2_name": "Vertrauensperson 2", "vp2_sub": "Erhält ebenfalls eine Kopie", "vp2_badge": "Optional", "ha_name": "Hausarzt / Hausärztin", "ha_sub": "Empfohlen — Praxis erhält eine Kopie", "ha_badge": "Optional", "rel_options": ["Bitte wählen", "Ehepartner/in", "Lebenspartner/in", "Kind", "Geschwister", "Elternteil", "Freund/in", "Andere"], "firstname_ph": "Vorname", "lastname_ph": "Nachname", "phone_label": "Telefon (optional)", "phone_ph": "+41 79 000 00 00", "email_doc_hint": "Wird im Dokument aufgeführt, nicht automatisch angeschrieben", "vertretung_label": "Diese Person darf im Ernstfall Entscheidungen für mich treffen", "vertretung_hint": "Vertretung", "doc_name": "Name Arzt/Ärztin", "doc_name_ph": "Dr. ...", "praxis_label": "Praxisname", "praxis_ph": "Praxis ...", "doc_email": "E-Mail Praxis", "doc_email_ph": "praxis@beispiel.ch", "doc_email_hint": "Wird im Dokument aufgeführt", "nsteps_title": "Was passiert nach dem Ausfüllen?", "nsteps": [["PDF herunterladen", ""], ["Ausdrucken, datieren & unterschreiben", "ZGB Art. 371"], ["Kopien weiterleiten", ""], ["Original sicher aufbewahren", ""]], "dw_news_src": "Bundesgericht · Urteil April 2026", "dw_news_title": "Tochter stirbt im Spital — Mutter erfährt nicht warum", "dw_news_text": "Eine 61-jährige Frau erlitt einen Schlaganfall und starb im Spital. Ihre Mutter wollte Einsicht in die Krankenakte — und wurde abgewiesen. Das Bundesgericht bestätigte: Das Arztgeheimnis schützt die Privatsphäre auch über den Tod hinaus.", "dw_news_link": "Zum Artikel — Beobachter.ch", "dw_title": "Datenweitergabe im Todesfall regeln", "dw_sub": "Damit Ihre Angehörigen Auskunft erhalten dürfen", "dw_intro": "Ohne eine ausdrückliche Erlaubnis darf das Spital Ihre Krankenakte nach dem Tod niemandem zeigen — auch nicht Ihrem Ehepartner oder Ihren Kindern.", "dw_hint": "Mehrere Optionen möglich — ausser \"Nein\".", "dw_opts": [["dw1", false, "Meine Vertrauenspersonen dürfen Einsicht in meine Krankenakte erhalten", "Das Spital und behandelnde Ärzte sind berechtigt, den eingetragenen Vertrauenspersonen Auskunft zu erteilen — auch nach meinem Tod."], ["dw2", false, "Mein Hausarzt darf meine Daten an spezialisierte Ärzte weitergeben", "Falls ich bewusstlos bin, darf mein Hausarzt relevante medizinische Informationen an das behandelnde Spital weitergeben."], ["dw3", true, "Nein — ich möchte keine Datenweitergabe erlauben", "Das Arztgeheimnis gilt vollumfänglich. Keine Person erhält Einsicht in meine Krankenakte."]], "dw_or": "oder", "dw_note": "Diese Angaben erscheinen als separater Abschnitt in Ihrer Verfügung.", "confirm_labels": ["Name", "Geburtsdatum", "Kanton", "E-Mail", "Lebenserhaltung", "Schmerzbehandlung", "Organspende", "Situationen", "Ergänzung", "Krankenakte", "Hausarzt"], "confirm_vals": ["Maria Müller", "12.03.1958", "Zürich", "maria@gmail.com", "Keine", "Ja, immer", "Ja, alle Organe", "", "Keine Angabe", "Vertrauenspersonen dürfen Einsicht erhalten", "Darf Daten weiterleiten"], "edit_btn": "Bearbeiten", "warn_title": "Wichtig — nach dem Download", "warn_body": "Das PDF muss ausgedruckt, handschriftlich datiert und unterschrieben werden. Erst dann ist Ihre Verfügung rechtsgültig (ZGB Art. 371).", "consent1": "Ich bestätige, dass diese Angaben meinem freien Willen entsprechen und ich zum jetzigen Zeitpunkt urteilsfähig bin.", "consent2": "Ich bin einverstanden, gelegentliche Vorsorge-Tipps und einen jährlichen Erinnerungs-Newsletter per E-Mail zu erhalten.", "consent2_sub": "Kein Spam. Jederzeit abmeldbar. Wir speichern nur Name, E-Mail und Erstellungsdatum — kein medizinischer Inhalt.", "done_h": "Ihre Verfügung ist bereit", "done_sub": "Das PDF wurde generiert. Wie möchten Sie weiter vorgehen?", "vc1_title": "Ausdrucken & unterschreiben", "vc1_badge": "Empfohlen", "vc1_sub": "Klassischer Weg — kein Setup, funktioniert immer.", "vc1_pill": "Vollständig rechtsgültig — Ärzte sind verpflichtet, sich daran zu halten", "vc1_steps": ["PDF herunterladen und ausdrucken", "Datum setzen und von Hand unterschreiben", "Kopien persönlich oder per Post weiterleiten"], "vc1_step_subs": ["", "Erst mit Ihrer Unterschrift gilt das Dokument rechtlich", ""], "vc1_btn": "PDF herunterladen", "vc2_title": "Online unterschreiben mit SwissID", "vc2_sub": "Kein Ausdrucken nötig — alles bleibt digital.", "vc2_pill": "Vollständig rechtsgültig — digitale Signatur gleichgestellt", "vc2_steps": ["SwissID App öffnen", "Dokument erscheint automatisch zur Signatur", "Signiert — fertig. Kein Ausdrucken nötig."], "vc2_step_subs": ["Setup ca. 10 Min. auf swissid.ch", "", ""], "vc2_btn": "Mit SwissID unterschreiben", "vc3_title": "Jetzt nur teilen — Unterschrift später", "vc3_sub": "Vertrauenspersonen erhalten das Dokument und kennen Ihre Wünsche.", "vc3_pill": "Noch nicht unterschrieben — Unterschrift folgt später", "vc3_info": "Ärzte berücksichtigen Ihre Wertvorstellungen — sie sind aber erst nach Ihrer Unterschrift verpflichtet, sich daran zu halten.", "share_label": "PDF wird jetzt gesendet an:", "share_contacts": [["TM", "Thomas Müller", "Ehemann · Vertretung"], ["SB", "Dr. Sabine Bauer", "Hausärztin"]], "share_btn": "Senden", "reminder_title": "Erinnerung in 14 Tagen", "reminder_body": "Wir schicken Ihnen eine E-Mail — damit Sie die Unterschrift nachholen können.", "err_required": "Bitte füllen Sie alle Pflichtfelder aus.", "err_email": "Bitte geben Sie eine gültige E-Mail-Adresse ein.", "err_selection": "Bitte wählen Sie eine Option für: ", "err_organ": "Bitte wählen Sie mindestens ein Organ aus.", "err_vp1": "Bitte füllen Sie mindestens Vertrauensperson 1 mit Name und E-Mail aus.", "err_vp1_email": "Bitte geben Sie eine gültige E-Mail für Vertrauensperson 1 ein.", "field_life": "Lebenserhaltende Massnahmen", "field_pain": "Schmerzbehandlung", "field_organ": "Organspende", "step_labels": {"Person": "Person", "Medizin": "Medizin", "Werte": "Werte", "Kontakte": "Kontakte", "Prüfen": "Prüfen"}}, "fr": {"labels": ["Personne", "Médecine", "Valeurs", "Contacts", "Vérifier"], "titles": ["Données personnelles", "Souhaits médicaux", "Valeurs & qualité de vie", "Personnes de confiance", "Vérifier & envoyer"], "descs": ["Nom et date de naissance de la personne — informations obligatoires pour la validité juridique.", "Que doit-il se passer en cas d'urgence? Lisez les explications — vos réponses sont juridiquement contraignantes.", "Choisissez les situations qui vous préoccupent et définissez votre position.", "Indiquez les personnes qui doivent recevoir une copie de votre directive — après signature.", "Vérifiez vos informations. En cas d'erreur, cliquez simplement sur \"Modifier\"."], "btn_next": "Suivant", "btn_back": "Retour", "btn_submit": "Générer le PDF", "submit_hint": "Veuillez confirmer les deux champs", "canton_label": "Canton de domicile", "cantons": ["Zurich", "Berne", "Bâle", "Genève", "Lucerne", "Argovie", "Autre"], "firstname": "Prénom", "lastname": "Nom", "birthdate": "Date de naissance", "email_label": "Adresse e-mail", "email_hint": "Pour recevoir le PDF et des conseils de prévention occasionnels", "email_ph": "votre@email.ch", "sl1": "Mesures de maintien en vie", "sh1": "Des mesures comme la ventilation artificielle, la réanimation ou l'alimentation artificielle — tout ce qui prolonge techniquement la vie, même sans possibilité de guérison.", "life_opts": [["nein", "Aucune mesure de maintien en vie", "Si selon le jugement médical il n'y a aucune chance réaliste de récupération, aucun appareil de maintien en vie ne doit être utilisé. Le soulagement de la douleur reste une évidence."], ["ja", "Épuiser toutes les mesures", "L'équipe soignante doit faire tout ce qui est médicalement possible — indépendamment du pronostic."], ["situativ", "Décider selon la situation", "Ma personne de confiance doit décider avec le médecin en cas d'urgence."]], "sl2": "Traitement de la douleur & soins palliatifs", "sh2": "Soins palliatifs: soulager la douleur, réduire la souffrance et permettre une mort digne — même si cela raccourcit légèrement la vie.", "pain_opts": [["ja", "Oui, toujours — même si cela peut raccourcir la vie", "Soulagement maximal de la douleur, même si des médicaments raccourcissent légèrement la vie. Mon bien-être passe en premier."], ["basis", "Soins de base uniquement", "Soulagement de base de la douleur oui. Je renonce aux sédatifs puissants."]], "sl3": "Don d'organes", "sh3": "Depuis 2024, la réglementation du consentement présumé s'applique en Suisse: celui qui ne souhaite pas faire de don d'organes doit le préciser activement.", "organ_opts": [["ja", "Oui, donner tous les organes et tissus", "En cas de décès, tous les organes et tissus appropriés peuvent être prélevés pour des transplantations."], ["bestimmte", "Donner uniquement certains organes", "Je choisis moi-même quels organes peuvent être donnés."], ["nein", "Non, pas de don d'organes", "Je m'oppose expressément à tout prélèvement d'organes ou de tissus après mon décès."]], "organs": ["Cœur", "Poumons", "Foie", "Reins", "Pancréas", "Intestin", "Cornée", "Peau", "Os"], "sit_hint": "Ouvrir une carte pour choisir une position. Plusieurs situations possibles.", "extra_label": "Compléments personnels (optionnel)", "extra_ph": "Souhaits personnels, convictions religieuses, craintes particulières...", "extra_hint": "Ce texte apparaîtra mot pour mot dans votre directive.", "sits": [["koma", "Coma permanent ou état végétatif", "Vous êtes physiquement en vie, mais ne montrez plus de réactions conscientes. Une récupération est jugée improbable.", ["Aucune mesure de maintien en vie — je veux pouvoir mourir dignement.", "Mesures pour une durée limitée (ex. 3 mois) — réévaluer ensuite.", "Poursuivre toutes les mesures — aussi longtemps que médicalement possible.", "Ma personne de confiance doit décider avec le médecin.", "Pas de déclaration."]], ["demenz", "Démence avancée", "Vous ne reconnaissez plus vos proches et dépendez entièrement de soins.", ["Aucune intervention de maintien en vie — focus sur le bien-être.", "Soins de base oui, mais pas de médecine intensive ou réanimation.", "Alimentation artificielle oui, mais pas de ventilation ou réanimation.", "Toutes les mesures — chaque vie a de la dignité.", "Ma personne de confiance doit décider.", "Pas de déclaration."]], ["endstadium", "Maladie incurable en phase terminale", "La guérison n'est plus possible, le décès est prévisible dans un avenir proche.", ["Soins palliatifs — soulagement de la douleur plutôt que prolongation de vie.", "Épuiser tous les traitements disponibles tant qu'il y a une chance.", "Plus d'hospitalisation — mourir à la maison si possible.", "Hospice plutôt qu'hôpital.", "Ma personne de confiance doit décider.", "Pas de déclaration."]], ["reanimation", "Arrêt cardiaque ou respiratoire", "L'équipe soignante doit décider immédiatement de pratiquer ou non une réanimation.", ["Toujours tenter la réanimation.", "Réanimation uniquement avec des perspectives réalistes de récupération.", "Pas de réanimation en cas de maladie grave préexistante.", "Pas de réanimation en aucune circonstance (DNR).", "Ma personne de confiance doit décider.", "Pas de déclaration."]], ["beatmung", "Ventilation artificielle", "Une machine prend en charge la respiration — peut-être de façon permanente.", ["Ventilation pour une durée limitée pour évaluer la situation.", "Ventilation uniquement avec des perspectives réalistes de récupération.", "Pas de ventilation permanente — arrêter si aucune amélioration prévisible.", "Ventilation aussi longtemps que médicalement possible.", "Ma personne de confiance doit décider.", "Pas de déclaration."]], ["pflegeheim", "Hébergement permanent en EMS", "Vous ne pouvez plus vivre de façon autonome et devez être pris en charge en permanence.", ["À la maison ou chez des proches — aussi longtemps que possible.", "EMS acceptable si la qualité et la proximité sont satisfaisantes.", "EMS dans ma région de préférence.", "Pas de préférence — que mes proches décident.", "Ma personne de confiance doit décider.", "Pas de déclaration."]]], "info_blue": "Après avoir rempli le formulaire, nous générons votre PDF. Vous l'imprimez, le signez à la main — et transmettez ensuite les copies vous-même.", "vp1_name": "Personne de confiance 1", "vp1_sub": "Interlocuteur principal en cas d'urgence", "vp1_badge": "Obligatoire", "vp2_name": "Personne de confiance 2", "vp2_sub": "Reçoit également une copie", "vp2_badge": "Optionnel", "ha_name": "Médecin de famille", "ha_sub": "Recommandé — le cabinet reçoit une copie", "ha_badge": "Optionnel", "rel_options": ["Veuillez choisir", "Époux/épouse", "Partenaire", "Enfant", "Frère/sœur", "Parent", "Ami(e)", "Autre"], "firstname_ph": "Prénom", "lastname_ph": "Nom", "phone_label": "Téléphone (optionnel)", "phone_ph": "+41 79 000 00 00", "email_doc_hint": "Mentionné dans le document, non envoyé automatiquement", "vertretung_label": "Cette personne peut prendre des décisions pour moi en cas d'urgence", "vertretung_hint": "Représentant", "doc_name": "Nom du médecin", "doc_name_ph": "Dr. ...", "praxis_label": "Nom du cabinet", "praxis_ph": "Cabinet ...", "doc_email": "E-mail du cabinet", "doc_email_ph": "cabinet@exemple.ch", "doc_email_hint": "Mentionné dans le document", "nsteps_title": "Que se passe-t-il après?", "nsteps": [["Télécharger le PDF", ""], ["Imprimer, dater & signer", "CC art. 371"], ["Transmettre les copies", ""], ["Conserver l'original en lieu sûr", ""]], "dw_news_src": "Tribunal fédéral · Arrêt avril 2026", "dw_news_title": "Une fille meurt à l'hôpital — la mère n'apprend pas pourquoi", "dw_news_text": "Une femme de 61 ans a subi un AVC et est décédée à l'hôpital. Sa mère a voulu consulter le dossier médical — et a été déboutée. Le Tribunal fédéral a confirmé: le secret médical protège la vie privée même après le décès.", "dw_news_link": "Vers l'article — Beobachter.ch", "dw_title": "Régler la transmission de données en cas de décès", "dw_sub": "Pour que vos proches puissent obtenir des informations", "dw_intro": "Sans autorisation expresse, l'hôpital ne peut montrer votre dossier médical à personne après le décès — pas même à votre conjoint(e) ou vos enfants.", "dw_hint": "Plusieurs options possibles — sauf \"Non\".", "dw_opts": [["dw1", false, "Mes personnes de confiance peuvent consulter mon dossier médical", "L'hôpital et les médecins traitants sont autorisés à fournir des informations aux personnes de confiance inscrites — même après mon décès."], ["dw2", false, "Mon médecin de famille peut transmettre mes données à des spécialistes", "Si je suis inconscient(e), mon médecin de famille peut transmettre des informations médicales pertinentes à l'hôpital traitant."], ["dw3", true, "Non — je ne souhaite pas de transmission de données", "Le secret médical s'applique dans son intégralité. Aucune personne n'aura accès à mon dossier médical."]], "dw_or": "ou", "dw_note": "Ces informations apparaîtront comme une section séparée dans votre directive.", "confirm_labels": ["Nom", "Date de naissance", "Canton", "E-mail", "Maintien en vie", "Traitement douleur", "Don organes", "Situations", "Complément", "Dossier médical", "Médecin famille"], "confirm_vals": ["Maria Müller", "12.03.1958", "Zurich", "maria@gmail.com", "Aucune", "Oui, toujours", "Oui, tous", "", "Pas de déclaration", "Les personnes de confiance peuvent consulter", "Peut transmettre les données"], "edit_btn": "Modifier", "warn_title": "Important — après le téléchargement", "warn_body": "Le PDF doit être imprimé, daté et signé à la main. Ce n'est qu'alors que votre directive sera juridiquement valable (CC art. 371).", "consent1": "Je confirme que ces informations correspondent à ma libre volonté et que je suis capable de discernement au moment présent.", "consent2": "Je consens à recevoir occasionnellement des conseils de prévention et une newsletter annuelle de rappel par e-mail.", "consent2_sub": "Pas de spam. Désabonnement à tout moment. Nous ne conservons que le nom, l'e-mail et la date de création — aucun contenu médical.", "done_h": "Votre directive est prête", "done_sub": "Le PDF a été généré. Comment souhaitez-vous procéder?", "vc1_title": "Imprimer & signer", "vc1_badge": "Recommandé", "vc1_sub": "Méthode classique — pas de configuration, fonctionne toujours.", "vc1_pill": "Pleinement valide — les médecins sont tenus de s'y conformer", "vc1_steps": ["Télécharger et imprimer le PDF", "Dater et signer à la main", "Transmettre les copies en personne ou par courrier"], "vc1_step_subs": ["", "Votre signature rend le document juridiquement valable", ""], "vc1_btn": "Télécharger le PDF", "vc2_title": "Signer en ligne avec SwissID", "vc2_sub": "Pas d'impression nécessaire — tout reste numérique.", "vc2_pill": "Pleinement valide — signature numérique équivalente", "vc2_steps": ["Ouvrir l'application SwissID", "Le document apparaît automatiquement pour signature", "Signé — terminé. Pas d'impression nécessaire."], "vc2_step_subs": ["Configuration env. 10 min. sur swissid.ch", "", ""], "vc2_btn": "Signer avec SwissID", "vc3_title": "Partager maintenant — signer plus tard", "vc3_sub": "Les personnes de confiance reçoivent le document et connaissent vos souhaits.", "vc3_pill": "Pas encore signé — signature ultérieure", "vc3_info": "Les médecins tiennent compte de vos valeurs — mais ils ne sont tenus de les respecter qu'après votre signature.", "share_label": "Le PDF est envoyé à:", "share_contacts": [["TM", "Thomas Müller", "Mari · Représentant"], ["SB", "Dr. Sabine Bauer", "Médecin de famille"]], "share_btn": "Envoyer", "reminder_title": "Rappel dans 14 jours", "reminder_body": "Nous vous enverrons un e-mail — pour que vous puissiez apposer votre signature quand vous êtes prêt(e).", "err_required": "Veuillez remplir tous les champs obligatoires.", "err_email": "Veuillez saisir une adresse e-mail valide.", "err_selection": "Veuillez choisir une option pour: ", "err_organ": "Veuillez sélectionner au moins un organe.", "err_vp1": "Veuillez remplir au moins la personne de confiance 1 avec nom et e-mail.", "err_vp1_email": "Veuillez saisir un e-mail valide pour la personne de confiance 1.", "field_life": "Mesures de maintien en vie", "field_pain": "Traitement de la douleur", "field_organ": "Don d'organes"}, "en": {"labels": ["Person", "Medical", "Values", "Contacts", "Review"], "titles": ["Personal Details", "Medical Wishes", "Values & Quality of Life", "Trusted Persons", "Review & Submit"], "descs": ["Name and date of birth of the person — mandatory information for legal validity.", "What should happen in an emergency? Read the explanations — your answers are legally binding.", "Choose situations that concern you and define your position.", "Enter persons who should receive a copy of your directive — after signing.", "Check your information. Click \"Edit\" to make changes."], "btn_next": "Next", "btn_back": "Back", "btn_submit": "Generate PDF", "submit_hint": "Please confirm both fields", "canton_label": "Canton of residence", "cantons": ["Zurich", "Bern", "Basel", "Geneva", "Lucerne", "Aargau", "Other"], "firstname": "First name", "lastname": "Last name", "birthdate": "Date of birth", "email_label": "Email address", "email_hint": "To receive the PDF and occasional prevention tips", "email_ph": "your@email.ch", "sl1": "Life-sustaining measures", "sh1": "Measures such as artificial ventilation, resuscitation or artificial nutrition — anything that technically prolongs life, even without the possibility of recovery.", "life_opts": [["nein", "No life-sustaining measures", "If in medical judgment there is no realistic chance of recovery, no life-sustaining devices should be used. Pain relief remains a matter of course."], ["ja", "Exhaust all measures", "The medical team should do everything medically possible — regardless of the prognosis."], ["situativ", "Decide based on the situation", "My trusted person should decide together with the doctor in an emergency."]], "sl2": "Pain management & palliative care", "sh2": "Palliative care: relieve pain, reduce suffering and enable a dignified death — even if this slightly shortens life.", "pain_opts": [["ja", "Yes, always — even if it may shorten life", "Maximum pain relief, even if medication slightly shortens life. My well-being comes first."], ["basis", "Basic care only", "Basic pain relief yes. I prefer to avoid strong sedatives."]], "sl3": "Organ donation", "sh3": "Since 2024, the presumed consent regulation applies in Switzerland: anyone who does not wish to donate organs must actively state this.", "organ_opts": [["ja", "Yes, donate all organs and tissue", "In the event of death, all suitable organs and tissue may be removed for transplantation."], ["bestimmte", "Donate only certain organs", "I choose which organs may be donated."], ["nein", "No, no organ donation", "I expressly object to any removal of organs or tissue after my death."]], "organs": ["Heart", "Lungs", "Liver", "Kidneys", "Pancreas", "Intestine", "Cornea", "Skin", "Bone"], "sit_hint": "Open a card to choose a position. Multiple situations possible.", "extra_label": "Personal additions (optional)", "extra_ph": "Personal wishes, religious beliefs, special fears...", "extra_hint": "This text will appear verbatim in your directive.", "sits": [["koma", "Permanent coma or vegetative state", "You are physically alive but show no conscious reactions. Recovery is considered unlikely.", ["No life-sustaining measures — I want to be able to die with dignity.", "Measures for a limited time (e.g. 3 months) — then reassess.", "Continue all measures — as long as medically possible.", "My trusted person should decide with the doctor.", "No declaration."]], ["demenz", "Advanced dementia", "You no longer recognise your loved ones and are completely dependent on care.", ["No life-sustaining interventions — focus on well-being.", "Basic care yes, but no intensive medicine or resuscitation.", "Artificial nutrition yes, but no ventilation or resuscitation.", "All measures — every life has dignity.", "My trusted person should decide.", "No declaration."]], ["endstadium", "Incurable illness in terminal stage", "Recovery is no longer possible; death is expected in the foreseeable future.", ["Palliative care — pain relief rather than life extension.", "Exhaust all available treatments as long as there is a chance.", "No more hospital stays — die at home if possible.", "Hospice rather than hospital.", "My trusted person should decide.", "No declaration."]], ["reanimation", "Cardiac or respiratory arrest", "The medical team must immediately decide whether to perform resuscitation.", ["Always attempt resuscitation.", "Resuscitation only with realistic prospects of recovery.", "No resuscitation in case of serious pre-existing illness.", "No resuscitation under any circumstances (DNR).", "My trusted person should decide.", "No declaration."]], ["beatmung", "Artificial ventilation", "A machine takes over breathing — possibly permanently.", ["Ventilation for a limited time to assess the situation.", "Ventilation only with realistic prospects of recovery.", "No permanent ventilation — switch off if no improvement foreseeable.", "Ventilation as long as medically possible.", "My trusted person should decide.", "No declaration."]], ["pflegeheim", "Permanent care home placement", "You can no longer live independently and must be cared for permanently.", ["At home or with relatives — as long as possible.", "Care home acceptable if quality and proximity are right.", "Care home in my area preferred.", "No preference — let relatives decide.", "My trusted person should decide.", "No declaration."]]], "info_blue": "After filling in the form, we generate your PDF. You print it, sign it by hand — and then forward the copies yourself.", "vp1_name": "Trusted person 1", "vp1_sub": "Main contact in an emergency", "vp1_badge": "Required", "vp2_name": "Trusted person 2", "vp2_sub": "Also receives a copy", "vp2_badge": "Optional", "ha_name": "GP / Family doctor", "ha_sub": "Recommended — practice receives a copy", "ha_badge": "Optional", "rel_options": ["Please select", "Spouse", "Partner", "Child", "Sibling", "Parent", "Friend", "Other"], "firstname_ph": "First name", "lastname_ph": "Last name", "phone_label": "Phone (optional)", "phone_ph": "+41 79 000 00 00", "email_doc_hint": "Listed in the document, not sent automatically", "vertretung_label": "This person may make decisions for me in an emergency", "vertretung_hint": "Representative", "doc_name": "Doctor's name", "doc_name_ph": "Dr. ...", "praxis_label": "Practice name", "praxis_ph": "Practice ...", "doc_email": "Practice email", "doc_email_ph": "practice@example.ch", "doc_email_hint": "Listed in the document", "nsteps_title": "What happens next?", "nsteps": [["Download PDF", ""], ["Print, date & sign", "Swiss Civil Code Art. 371"], ["Forward copies", ""], ["Keep original in a safe place", ""]], "dw_news_src": "Federal Supreme Court · Ruling April 2026", "dw_news_title": "Daughter dies in hospital — mother never finds out why", "dw_news_text": "A 61-year-old woman suffered a stroke and died in hospital. Her mother wanted to access the medical records — and was refused. The Federal Supreme Court confirmed: medical confidentiality protects privacy even after death.", "dw_news_link": "Read article — Beobachter.ch", "dw_title": "Regulate data sharing in the event of death", "dw_sub": "So your loved ones can obtain information", "dw_intro": "Without express permission, the hospital cannot show your medical records to anyone after death — not even your spouse or children.", "dw_hint": "Multiple options possible — except \"No\".", "dw_opts": [["dw1", false, "My trusted persons may access my medical records", "The hospital and treating doctors are authorised to provide information to the listed trusted persons — even after my death."], ["dw2", false, "My GP may pass my data to specialist doctors", "If I am unconscious, my GP may pass on relevant medical information to the treating hospital."], ["dw3", true, "No — I do not wish data to be shared", "Medical confidentiality applies in full. No person will have access to my medical records."]], "dw_or": "or", "dw_note": "This information will appear as a separate section in your directive.", "confirm_labels": ["Name", "Date of birth", "Canton", "Email", "Life-sustaining", "Pain management", "Organ donation", "Situations", "Addition", "Medical records", "GP"], "confirm_vals": ["Maria Müller", "12.03.1958", "Zurich", "maria@gmail.com", "None", "Yes, always", "Yes, all organs", "", "No declaration", "Trusted persons may access", "May share data"], "edit_btn": "Edit", "warn_title": "Important — after downloading", "warn_body": "The PDF must be printed, hand-dated and signed. Only then is your directive legally valid (Swiss Civil Code Art. 371).", "consent1": "I confirm that this information reflects my free will and that I am currently of sound mind.", "consent2": "I agree to receive occasional prevention tips and an annual reminder newsletter by email.", "consent2_sub": "No spam. Unsubscribe at any time. We only store name, email and creation date — no medical content.", "done_h": "Your directive is ready", "done_sub": "The PDF has been generated. How would you like to proceed?", "vc1_title": "Print & sign", "vc1_badge": "Recommended", "vc1_sub": "Classic method — no setup, always works.", "vc1_pill": "Fully legally valid — doctors are obliged to comply", "vc1_steps": ["Download and print PDF", "Set date and sign by hand", "Forward copies in person or by post"], "vc1_step_subs": ["", "Your signature makes the document legally binding", ""], "vc1_btn": "Download PDF", "vc2_title": "Sign online with SwissID", "vc2_sub": "No printing needed — everything stays digital.", "vc2_pill": "Fully legally valid — digital signature equivalent", "vc2_steps": ["Open SwissID app", "Document appears automatically for signature", "Signed — done. No printing needed."], "vc2_step_subs": ["Setup approx. 10 min. at swissid.ch", "", ""], "vc2_btn": "Sign with SwissID", "vc3_title": "Share now — sign later", "vc3_sub": "Trusted persons receive the document and know your wishes.", "vc3_pill": "Not yet signed — signature to follow", "vc3_info": "Doctors take your values into account — but they are only obliged to comply after your signature.", "share_label": "PDF is now sent to:", "share_contacts": [["TM", "Thomas Müller", "Husband · Representative"], ["SB", "Dr. Sabine Bauer", "Family doctor"]], "share_btn": "Send", "reminder_title": "Reminder in 14 days", "reminder_body": "We'll send you an email — so you can complete the signature when you're ready.", "err_required": "Please fill in all required fields.", "err_email": "Please enter a valid email address.", "err_selection": "Please choose an option for: ", "err_organ": "Please select at least one organ.", "err_vp1": "Please fill in at least trusted person 1 with name and email.", "err_vp1_email": "Please enter a valid email for trusted person 1.", "field_life": "Life-sustaining measures", "field_pain": "Pain management", "field_organ": "Organ donation"}};
+
 (function(){
 var CHK = '<svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 var cur = 0, TOTAL = 5;
-var LABELS = ['Person','Medizin','Werte','Kontakte','Pr\u00fcfen'];
-var TITLES = ['Pers\u00f6nliche Angaben','Medizinische W\u00fcnsche','Werte \u0026 Lebensqualit\u00e4t','Vertrauenspersonen','Pr\u00fcfen \u0026 Abschicken'];
-var DESCS  = [
-  'Name und Geburtsdatum der verf\u00fcgenden Person \u2014 Pflichtangaben f\u00fcr die rechtliche G\u00fcltigkeit.',
-  'Was soll im Ernstfall gelten? Lesen Sie die Erkl\u00e4rungen \u2014 Ihre Antworten sind rechtlich verbindlich.',
-  'W\u00e4hlen Sie Situationen aus, die Sie besch\u00e4ftigen, und legen Sie Ihre Haltung fest.',
-  'Tragen Sie Personen ein, die eine Kopie Ihrer Verf\u00fcgung erhalten sollen \u2014 nach der Unterschrift.',
-  'Kontrollieren Sie Ihre Angaben. Bei Fehler einfach auf \u201eBearbeiten\u201c klicken.'
-];
-var SITS = [
-  {id:'koma',title:'Dauerhaftes Koma oder Wachkoma',desc:'Sie sind k\u00f6rperlich am Leben, zeigen aber keine bewussten Reaktionen mehr. Eine Erholung gilt als unwahrscheinlich.',name:'koma_c',opts:[{t:'Keine lebenserhaltenden Massnahmen \u2014 ich m\u00f6chte in W\u00fcrde sterben d\u00fcrfen.'},{t:'Massnahmen f\u00fcr begrenzte Zeit (z.B. 3 Monate) \u2014 danach neu beurteilen.'},{t:'Alle Massnahmen weiterf\u00fchren \u2014 so lange wie medizinisch m\u00f6glich.'},{t:'Meine Vertrauensperson soll mit dem Arzt entscheiden.'},{t:'Keine Angabe.',n:true}]},
-  {id:'demenz',title:'Fortgeschrittene Demenz',desc:'Sie erkennen Ihre Angeh\u00f6rigen nicht mehr und sind vollst\u00e4ndig auf Pflege angewiesen.',name:'demenz_c',opts:[{t:'Keine lebenserhaltenden Eingriffe \u2014 Fokus auf Wohlbefinden.'},{t:'Grundpflege ja, aber keine Intensivmedizin oder Reanimation.'},{t:'K\u00fcnstliche Ern\u00e4hrung ja, aber keine Beatmung oder Reanimation.'},{t:'Alle Massnahmen \u2014 jedes Leben hat W\u00fcrde.'},{t:'Meine Vertrauensperson soll entscheiden.'},{t:'Keine Angabe.',n:true}]},
-  {id:'endstadium',title:'Unheilbare Krankheit im Endstadium',desc:'Heilung ist nicht mehr m\u00f6glich, der Tod steht in absehbarer Zeit bevor.',name:'end_c',opts:[{t:'Palliativversorgung \u2014 Schmerzfreiheit statt Lebensverl\u00e4ngerung.'},{t:'Alle Behandlungen aussch\u00f6pfen, so lange eine Chance besteht.'},{t:'Keine Spitalaufenthalte mehr \u2014 zuhause sterben.'},{t:'Sterbehospiz statt Spital.'},{t:'Meine Vertrauensperson soll entscheiden.'},{t:'Keine Angabe.',n:true}]},
-  {id:'reanimation',title:'Herzstillstand oder Atemstillstand',desc:'Das Behandlungsteam muss sofort entscheiden ob es eine Reanimation einleitet.',name:'rea_c',opts:[{t:'Reanimation immer versuchen.'},{t:'Reanimation nur bei realistischer Aussicht auf Erholung.'},{t:'Keine Reanimation bei schwerer Grunderkrankung.'},{t:'Keine Reanimation unter keinen Umst\u00e4nden (DNR).'},{t:'Meine Vertrauensperson soll entscheiden.'},{t:'Keine Angabe.',n:true}]},
-  {id:'beatmung',title:'K\u00fcnstliche Beatmung',desc:'Eine Maschine \u00fcbernimmt die Atmung \u2014 m\u00f6glicherweise dauerhaft.',name:'beat_c',opts:[{t:'Beatmung f\u00fcr begrenzte Zeit, um die Situation zu beurteilen.'},{t:'Beatmung nur bei realistischer Aussicht auf Erholung.'},{t:'Keine dauerhafte Beatmung \u2014 Ger\u00e4t abschalten wenn keine Besserung absehbar.'},{t:'Beatmung so lange wie medizinisch m\u00f6glich.'},{t:'Meine Vertrauensperson soll entscheiden.'},{t:'Keine Angabe.',n:true}]},
-  {id:'pflegeheim',title:'Dauerhafte Pflegeheimunterbringung',desc:'Sie k\u00f6nnen nicht mehr selbst\u00e4ndig leben und m\u00fcssen dauerhaft betreut werden.',name:'pflege_c',opts:[{t:'Zuhause oder bei Angeh\u00f6rigen \u2014 so lange wie m\u00f6glich.'},{t:'Pflegeheim akzeptabel, wenn Qualit\u00e4t und N\u00e4he stimmt.'},{t:'Pflegeheim in meiner N\u00e4he bevorzugt.'},{t:'Keine Pr\u00e4ferenz \u2014 Angeh\u00f6rige sollen entscheiden.'},{t:'Meine Vertrauensperson soll entscheiden.'},{t:'Keine Angabe.',n:true}]}
-];
+var lang = 'de';
+var T = WZ_TRANSLATIONS[lang];
+
+function detectLang() {
+  var bl = (navigator.language || navigator.userLanguage || 'de').toLowerCase();
+  if (bl.startsWith('fr')) return 'fr';
+  if (bl.startsWith('en')) return 'en';
+  return 'de';
+}
+
+function setLang(l) {
+  lang = l;
+  T = WZ_TRANSLATIONS[lang];
+  document.querySelectorAll('.wz-lang-btn').forEach(function(b){
+    b.classList.toggle('active', b.dataset.lang === l);
+  });
+  cur = 0;
+  render();
+}
+
+document.querySelectorAll('.wz-lang-btn').forEach(function(b){
+  b.addEventListener('click', function(){ setLang(b.dataset.lang); });
+});
 
 function el(tag, cls, html) {
   var d = document.createElement(tag);
@@ -265,90 +280,68 @@ function renderProgress() {
   var p = document.getElementById('wz-progress');
   p.innerHTML = '';
   for (var i = 0; i < TOTAL; i++) {
-    if (i > 0) {
-      var conn = el('div', 'wz-connector' + (i <= cur ? ' done' : ''));
-      p.appendChild(conn);
-    }
+    if (i > 0) p.appendChild(el('div', 'wz-connector' + (i <= cur ? ' done' : '')));
     var wrap = el('div', 'wz-dot-wrap');
     wrap.dataset.step = i;
     var dot = el('div', 'wz-dot' + (i < cur ? ' done' : i === cur ? ' active' : ''));
     dot.textContent = i < cur ? '\u2713' : (i+1);
     var lbl = el('div', 'wz-step-label' + (i === cur ? ' active' : ''));
-    lbl.textContent = LABELS[i];
-    wrap.appendChild(dot);
-    wrap.appendChild(lbl);
+    lbl.textContent = T.labels[i];
+    wrap.appendChild(dot); wrap.appendChild(lbl);
     wrap.addEventListener('click', (function(idx){ return function(){ if(idx<=cur){cur=idx;render();} }; })(i));
     p.appendChild(wrap);
   }
 }
 
 function mkRopt(name, val, title, sub) {
-  var lbl = el('label', 'wz-ropt');
-  lbl.dataset.group = name;
-  var inp = document.createElement('input');
-  inp.type = 'radio'; inp.name = name; inp.value = val;
+  var lbl = el('label', 'wz-ropt'); lbl.dataset.group = name;
+  var inp = document.createElement('input'); inp.type='radio'; inp.name=name; inp.value=val;
   var div = el('div');
-  var rl = el('div', 'wz-rl'); rl.textContent = title;
-  var rs = el('div', 'wz-rs'); rs.textContent = sub;
+  var rl = el('div','wz-rl'); rl.textContent = title;
+  var rs = el('div','wz-rs'); rs.textContent = sub;
   div.appendChild(rl); div.appendChild(rs);
   lbl.appendChild(inp); lbl.appendChild(div);
   return lbl;
 }
 
 function step1() {
-  var f = el('div', 'wz-fields');
-  var r1 = el('div', 'wz-row');
-  var fn = el('div','wz-field'); fn.innerHTML = '<label>Vorname</label><input type="text" placeholder="z.B. Maria"/>';
-  var ln = el('div','wz-field'); ln.innerHTML = '<label>Nachname</label><input type="text" placeholder="z.B. M\u00fcller"/>';
+  var f = el('div','wz-fields');
+  var r1 = el('div','wz-row');
+  var fn = el('div','wz-field'); fn.innerHTML = '<label>'+T.firstname+'</label><input type="text" placeholder="'+T.firstname_ph+'"/>';
+  var ln = el('div','wz-field'); ln.innerHTML = '<label>'+T.lastname+'</label><input type="text" placeholder="'+T.lastname_ph+'"/>';
   r1.appendChild(fn); r1.appendChild(ln);
   var r2 = el('div','wz-row');
-  var bd = el('div','wz-field'); bd.innerHTML = '<label>Geburtsdatum</label><input type="date"/>';
-  var kt = el('div','wz-field'); kt.innerHTML = '<label>Wohnkanton</label><select><option>Z\u00fcrich</option><option>Bern</option><option>Basel</option><option>Genf</option><option>Luzern</option><option>Aargau</option><option>Andere</option></select>';
+  var bd = el('div','wz-field'); bd.innerHTML = '<label>'+T.birthdate+'</label><input type="date"/>';
+  var kt = el('div','wz-field');
+  kt.innerHTML = '<label>'+T.canton_label+'</label><select>'+T.cantons.map(function(c){return '<option>'+c+'</option>';}).join('')+'</select>';
   r2.appendChild(bd); r2.appendChild(kt);
-  var em = el('div','wz-field'); em.innerHTML = '<label>E-Mail-Adresse</label><input type="email" placeholder="ihre@email.ch"/><span class="wz-hint">F\u00fcr den Erhalt des PDFs und gelegentliche Vorsorge-Tipps</span>';
+  var em = el('div','wz-field'); em.innerHTML = '<label>'+T.email_label+'</label><input type="email" placeholder="'+T.email_ph+'"/><span class="wz-hint">'+T.email_hint+'</span>';
   f.appendChild(r1); f.appendChild(r2); f.appendChild(em);
   return f;
 }
 
 function step2() {
   var wrap = el('div');
-  var organs = ['Herz','Lunge','Leber','Nieren','Bauchspeicheldr\u00fcse','Darm','Hornhaut','Haut','Knochen'];
-
-  function addSection(labelTxt, hintTxt, ropts) {
-    var sl = el('div','wz-slabel'); sl.textContent = labelTxt; wrap.appendChild(sl);
-    var sh = el('div','wz-shint'); sh.textContent = hintTxt; wrap.appendChild(sh);
-    var rg = el('div','wz-rgroup');
-    ropts.forEach(function(o){ rg.appendChild(mkRopt(o[0],o[1],o[2],o[3])); });
-    wrap.appendChild(rg);
-  }
-
-  addSection('Lebenserhaltende Massnahmen',
-    'Massnahmen wie k\u00fcnstliche Beatmung, Reanimation oder k\u00fcnstliche Ern\u00e4hrung \u2014 alles was das Leben technisch verl\u00e4ngert, auch wenn keine Heilung m\u00f6glich ist.',
-    [['life','nein','Keine lebenserhaltenden Massnahmen','Wenn nach \u00e4rztlichem Urteil keine realistische Chance auf Erholung besteht, sollen keine lebenserhaltenden Ger\u00e4te eingesetzt werden. Schmerzlinderung bleibt selbstverst\u00e4ndlich.'],
-     ['life','ja','Alle Massnahmen aussch\u00f6pfen','Das Behandlungsteam soll alles medizinisch M\u00f6gliche tun \u2014 unabh\u00e4ngig von der Prognose.'],
-     ['life','situativ','Je nach Situation entscheiden','Meine Vertrauensperson soll gemeinsam mit dem Arzt im Ernstfall entscheiden.']]);
-
+  var organs = T.organs;
+  var sl1 = el('div','wz-slabel'); sl1.textContent = T.sl1; wrap.appendChild(sl1);
+  var sh1 = el('div','wz-shint'); sh1.textContent = T.sh1; wrap.appendChild(sh1);
+  var rg1 = el('div','wz-rgroup');
+  T.life_opts.forEach(function(o){ rg1.appendChild(mkRopt('life',o[0],o[1],o[2])); });
+  wrap.appendChild(rg1);
   wrap.appendChild(el('div','wz-divider'));
-
-  addSection('Schmerzbehandlung \u0026 Palliativversorgung',
-    'Palliativversorgung: Schmerzen lindern, Leiden reduzieren und ein w\u00fcrdiges Sterben erm\u00f6glichen \u2014 auch wenn das Leben dadurch etwas verk\u00fcrzt wird.',
-    [['pain','ja','Ja, immer \u2014 auch wenn es das Leben verk\u00fcrzen k\u00f6nnte','Maximale Schmerzlinderung, selbst wenn Medikamente das Leben etwas verk\u00fcrzen. Mein Wohlbefinden steht im Vordergrund.'],
-     ['pain','basis','Nur Basisversorgung','Grundlegende Schmerzlinderung ja. Auf starke Sedativa verzichte ich lieber.']]);
-
+  var sl2 = el('div','wz-slabel'); sl2.textContent = T.sl2; wrap.appendChild(sl2);
+  var sh2 = el('div','wz-shint'); sh2.textContent = T.sh2; wrap.appendChild(sh2);
+  var rg2 = el('div','wz-rgroup');
+  T.pain_opts.forEach(function(o){ rg2.appendChild(mkRopt('pain',o[0],o[1],o[2])); });
+  wrap.appendChild(rg2);
   wrap.appendChild(el('div','wz-divider'));
-
-  var osl = el('div','wz-slabel'); osl.textContent = 'Organspende'; wrap.appendChild(osl);
-  var osh = el('div','wz-shint'); osh.textContent = 'Seit 2024 gilt in der Schweiz die Widerspruchsregelung: Wer keine Organspende w\u00fcnscht, muss das aktiv festhalten.'; wrap.appendChild(osh);
-  var org = el('div','wz-rgroup');
-
-  org.appendChild(mkRopt('organ','ja','Ja, alle Organe und Gewebe spenden','Im Todesfall d\u00fcrfen alle geeigneten Organe und Gewebe f\u00fcr Transplantationen entnommen werden.'));
-
-  var bestLbl = el('label','wz-ropt'); bestLbl.dataset.group = 'organ';
+  var sl3 = el('div','wz-slabel'); sl3.textContent = T.sl3; wrap.appendChild(sl3);
+  var sh3 = el('div','wz-shint'); sh3.textContent = T.sh3; wrap.appendChild(sh3);
+  var rg3 = el('div','wz-rgroup');
+  var bestLbl = el('label','wz-ropt'); bestLbl.dataset.group='organ';
   var bestInp = document.createElement('input'); bestInp.type='radio'; bestInp.name='organ'; bestInp.value='bestimmte';
-  var bestDiv = el('div','',''); bestDiv.style.width='100%';
-  var bestRL = el('div','wz-rl'); bestRL.textContent = 'Nur bestimmte Organe spenden';
-  var bestRS = el('div','wz-rs'); bestRS.textContent = 'Ich w\u00e4hle selbst aus, welche Organe gespendet werden d\u00fcrfen.';
-  var grid = el('div','wz-orgrid'); grid.id = 'wz-orgrid';
+  var bestDiv = el('div'); bestDiv.style.width='100%';
+  var grid = el('div','wz-orgrid'); grid.id='wz-orgrid';
   organs.forEach(function(n){
     var tile = el('div','wz-ortile');
     var chk = el('div','wz-orchk'); chk.innerHTML = CHK;
@@ -357,40 +350,46 @@ function step2() {
     tile.addEventListener('click', function(e){ e.stopPropagation(); tile.classList.toggle('selected'); });
     grid.appendChild(tile);
   });
-  bestDiv.appendChild(bestRL); bestDiv.appendChild(bestRS); bestDiv.appendChild(grid);
-  bestLbl.appendChild(bestInp); bestLbl.appendChild(bestDiv);
-  org.appendChild(bestLbl);
-  org.appendChild(mkRopt('organ','nein','Nein, keine Organspende','Ich widerspreche ausdr\u00fccklich jeder Organ- und Gewebeentnahme nach meinem Tod.'));
-  wrap.appendChild(org);
+  T.organ_opts.forEach(function(o){
+    if(o[0]==='bestimmte'){
+      var rl=el('div','wz-rl'); rl.textContent=o[1];
+      var rs=el('div','wz-rs'); rs.textContent=o[2];
+      bestDiv.appendChild(rl); bestDiv.appendChild(rs); bestDiv.appendChild(grid);
+      bestLbl.appendChild(bestInp); bestLbl.appendChild(bestDiv);
+      rg3.appendChild(bestLbl);
+    } else {
+      rg3.appendChild(mkRopt('organ',o[0],o[1],o[2]));
+    }
+  });
+  wrap.appendChild(rg3);
   return wrap;
 }
 
 function step3() {
   var wrap = el('div');
-  var hint = el('div','wz-shint'); hint.style.marginBottom='12px'; hint.textContent='Karte aufklappen um eine Haltung zu w\u00e4hlen. Mehrere Situationen m\u00f6glich.'; wrap.appendChild(hint);
+  var hint = el('div','wz-shint'); hint.style.marginBottom='12px'; hint.textContent=T.sit_hint; wrap.appendChild(hint);
   var sg = el('div','wz-sitgrid');
-
-  SITS.forEach(function(s){
-    var card = el('div','wz-sitcard'); card.id='wz-sit-'+s.id;
+  T.sits.forEach(function(s){
+    var card = el('div','wz-sitcard'); card.id='wz-sit-'+s[0];
     var hdr = el('div','wz-sithdr');
-    var chk = el('div','wz-sitchk'); chk.innerHTML = CHK;
-    var title = el('div','wz-sittitle'); title.textContent = s.title;
-    var tog = el('div','wz-sittoggle'); tog.textContent = '+';
+    var chk = el('div','wz-sitchk'); chk.innerHTML=CHK;
+    var title = el('div','wz-sittitle'); title.textContent=s[1];
+    var tog = el('div','wz-sittoggle'); tog.textContent='+';
     hdr.appendChild(chk); hdr.appendChild(title); hdr.appendChild(tog);
     hdr.addEventListener('click', function(){ card.classList.toggle('open'); });
-
     var body = el('div','wz-sitbody');
-    var desc = el('div','wz-sitdesc'); desc.textContent = s.desc; body.appendChild(desc);
+    var desc = el('div','wz-sitdesc'); desc.textContent=s[2]; body.appendChild(desc);
     var opts = el('div','wz-sitopts');
-    s.opts.forEach(function(o,i){
-      var opt = el('label','wz-sitopt'+(o.n?' neutral':'')); opt.dataset.group=s.name;
-      var inp = document.createElement('input'); inp.type='radio'; inp.name=s.name; inp.value=i;
-      var span = el('span','wz-sitopt-label'); span.textContent = o.t;
+    s[3].forEach(function(o,i){
+      var isNeutral = (i===s[3].length-1);
+      var opt = el('label','wz-sitopt'+(isNeutral?' neutral':'')); opt.dataset.group=s[0]+'_c';
+      var inp = document.createElement('input'); inp.type='radio'; inp.name=s[0]+'_c'; inp.value=i;
+      var span = el('span','wz-sitopt-label'); span.textContent=o;
       opt.appendChild(inp); opt.appendChild(span);
       opt.addEventListener('click', function(){
-        qa('[data-group="'+s.name+'"]',sg).forEach(function(x){ x.classList.remove('chosen'); });
+        qa('[data-group="'+s[0]+'_c"]',sg).forEach(function(x){x.classList.remove('chosen');});
         opt.classList.add('chosen'); inp.checked=true;
-        if(!o.n) card.classList.add('selected');
+        if(!isNeutral) card.classList.add('selected');
       });
       opts.appendChild(opt);
     });
@@ -401,10 +400,12 @@ function step3() {
   wrap.appendChild(sg);
   wrap.appendChild(el('div','wz-divider'));
   var ef = el('div','wz-field');
-  var el2 = document.createElement('label'); el2.style.cssText='font-size:11px;font-weight:700;color:#888;letter-spacing:.05em;text-transform:uppercase;font-family:sans-serif;'; el2.textContent='Eigene Erg\u00e4nzungen (optional)';
-  var ta = document.createElement('textarea'); ta.rows=3; ta.placeholder='Pers\u00f6nliche W\u00fcnsche, religi\u00f6se Vorstellungen, besondere \u00c4ngste...';
-  var hint2 = el('span','wz-hint'); hint2.textContent='Dieser Text erscheint w\u00f6rtlich in Ihrer Verf\u00fcgung.';
-  ef.appendChild(el2); ef.appendChild(ta); ef.appendChild(hint2);
+  var lbl = document.createElement('label');
+  lbl.style.cssText='font-size:11px;font-weight:700;color:#888;letter-spacing:.05em;text-transform:uppercase;font-family:sans-serif;';
+  lbl.textContent = T.extra_label;
+  var ta = document.createElement('textarea'); ta.rows=3; ta.placeholder=T.extra_ph;
+  var hint2 = el('span','wz-hint'); hint2.textContent=T.extra_hint;
+  ef.appendChild(lbl); ef.appendChild(ta); ef.appendChild(hint2);
   wrap.appendChild(ef);
   return wrap;
 }
@@ -412,363 +413,352 @@ function step3() {
 function mkCcard(num, avcls, cname, csub, bcls, btxt, showV) {
   var block = el('div','wz-cblock');
   var hdr = el('div','wz-chdr');
-  var av = el('div','wz-cav '+avcls); av.textContent = num;
+  var av = el('div','wz-cav '+avcls); av.textContent=num;
   var meta = el('div');
-  var cn = el('div','wz-cname'); cn.textContent = cname;
-  var cs = el('div','wz-csub'); cs.textContent = csub;
+  var cn = el('div','wz-cname'); cn.textContent=cname;
+  var cs = el('div','wz-csub'); cs.textContent=csub;
   meta.appendChild(cn); meta.appendChild(cs);
-  var badge = el('span','wz-badge '+bcls); badge.textContent = btxt;
+  var badge = el('span','wz-badge '+bcls); badge.textContent=btxt;
   hdr.appendChild(av); hdr.appendChild(meta); hdr.appendChild(badge);
   var card = el('div','wz-ccard');
-  var r1 = el('div','wz-row'); r1.style.marginBottom='10px';
-  r1.innerHTML = '<div class="wz-field"><label>Vorname</label><input type="text" placeholder="Vorname"/></div><div class="wz-field"><label>Nachname</label><input type="text" placeholder="Nachname"/></div>';
-  var r2 = el('div','wz-row'); r2.style.marginBottom='10px';
-  r2.innerHTML = '<div class="wz-field"><label>Beziehung</label><select><option value="">Bitte w\u00e4hlen</option><option>Ehepartner/in</option><option>Lebenspartner/in</option><option>Kind</option><option>Geschwister</option><option>Elternteil</option><option>Freund/in</option><option>Andere</option></select></div><div class="wz-field"><label>Telefon (optional)</label><input type="tel" placeholder="+41 79 000 00 00"/></div>';
-  var em = el('div','wz-field');
-  em.innerHTML = '<label>E-Mail-Adresse</label><input type="email" placeholder="email@beispiel.ch"/><span class="wz-hint">Wird im Dokument aufgef\u00fchrt, nicht automatisch angeschrieben</span>';
+  var r1=el('div','wz-row'); r1.style.marginBottom='10px';
+  r1.innerHTML='<div class="wz-field"><label>'+T.firstname+'</label><input type="text" placeholder="'+T.firstname_ph+'"/></div><div class="wz-field"><label>'+T.lastname+'</label><input type="text" placeholder="'+T.lastname_ph+'"/></div>';
+  var r2=el('div','wz-row'); r2.style.marginBottom='10px';
+  r2.innerHTML='<div class="wz-field"><label>Beziehung</label><select>'+T.rel_options.map(function(r){return '<option>'+r+'</option>';}).join('')+'</select></div><div class="wz-field"><label>'+T.phone_label+'</label><input type="tel" placeholder="'+T.phone_ph+'"/></div>';
+  var em=el('div','wz-field'); em.innerHTML='<label>'+T.email_label+'</label><input type="email" placeholder="'+T.email_ph+'"/><span class="wz-hint">'+T.email_doc_hint+'</span>';
   card.appendChild(r1); card.appendChild(r2); card.appendChild(em);
-  if (showV) {
-    var vrow = el('div','wz-vrow');
-    var vchk = el('div','wz-vchk'); vchk.innerHTML = CHK;
-    var vlbl = el('span','wz-vlabel'); vlbl.textContent = 'Diese Person darf im Ernstfall Entscheidungen f\u00fcr mich treffen';
-    var vhint = el('span','wz-vhint'); vhint.textContent = 'Vertretung';
+  if(showV){
+    var vrow=el('div','wz-vrow');
+    var vchk=el('div','wz-vchk'); vchk.innerHTML=CHK;
+    var vlbl=el('span','wz-vlabel'); vlbl.textContent=T.vertretung_label;
+    var vhint=el('span','wz-vhint'); vhint.textContent=T.vertretung_hint;
     vrow.appendChild(vchk); vrow.appendChild(vlbl); vrow.appendChild(vhint);
-    vrow.addEventListener('click', function(){ vrow.classList.toggle('checked'); });
+    vrow.addEventListener('click',function(){vrow.classList.toggle('checked');});
     card.appendChild(vrow);
   }
   block.appendChild(hdr); block.appendChild(card);
   return block;
 }
 
-function mkDwRow(id, label, sub, isNein) {
-  var row = el('div','wz-dwrow'+(isNein?' nein':'')); row.id=id;
-  var chk = el('div','wz-dwchk'); chk.innerHTML = CHK;
-  var div = el('div');
-  var rl = el('div','wz-dwrl'); rl.textContent = label;
-  var rs = el('div','wz-dwrs'); rs.textContent = sub;
+function mkDwRow(id, label, sub, isNein){
+  var row=el('div','wz-dwrow'+(isNein?' nein':'')); row.id=id;
+  var chk=el('div','wz-dwchk'); chk.innerHTML=CHK;
+  var div=el('div');
+  var rl=el('div','wz-dwrl'); rl.textContent=label;
+  var rs=el('div','wz-dwrs'); rs.textContent=sub;
   div.appendChild(rl); div.appendChild(rs);
   row.appendChild(chk); row.appendChild(div);
-  row.addEventListener('click', function(){
-    if (isNein) {
-      var wasChecked = row.classList.contains('checked');
+  row.addEventListener('click',function(){
+    if(isNein){
+      var was=row.classList.contains('checked');
       row.classList.remove('checked');
-      var d1=document.getElementById('wz-dw1'), d2=document.getElementById('wz-dw2');
-      if(d1) d1.classList.remove('checked');
-      if(d2) d2.classList.remove('checked');
-      if(!wasChecked) row.classList.add('checked');
+      var d1=document.getElementById('wz-dw1'),d2=document.getElementById('wz-dw2');
+      if(d1)d1.classList.remove('checked'); if(d2)d2.classList.remove('checked');
+      if(!was)row.classList.add('checked');
     } else {
-      var nein = document.getElementById('wz-dw3');
-      if(nein) nein.classList.remove('checked');
+      var nein=document.getElementById('wz-dw3');
+      if(nein)nein.classList.remove('checked');
       row.classList.toggle('checked');
     }
   });
   return row;
 }
 
-function step4() {
-  var wrap = el('div');
-  var info = el('div','wz-infoblue'); info.textContent='Nach dem Ausf\u00fcllen generieren wir Ihr PDF. Sie drucken es aus, unterschreiben es von Hand \u2014 und leiten die Kopien dann selbst weiter.';
-  wrap.appendChild(info);
-  wrap.appendChild(mkCcard('1','av-g','Vertrauensperson 1','Hauptansprechperson im Ernstfall','req','Pflicht',true));
+function step4(){
+  var wrap=el('div');
+  var info=el('div','wz-infoblue'); info.textContent=T.info_blue; wrap.appendChild(info);
+  wrap.appendChild(mkCcard('1','av-g',T.vp1_name,T.vp1_sub,'req',T.vp1_badge,true));
   wrap.appendChild(el('div','wz-divider'));
-  wrap.appendChild(mkCcard('2','av-m','Vertrauensperson 2','Erh\u00e4lt ebenfalls eine Kopie','opt','Optional',false));
+  wrap.appendChild(mkCcard('2','av-m',T.vp2_name,T.vp2_sub,'opt',T.vp2_badge,false));
   wrap.appendChild(el('div','wz-divider'));
-
-  // Hausarzt block
-  var hablock = el('div','wz-cblock');
-  var hahdr = el('div','wz-chdr');
-  hahdr.innerHTML = '<div class="wz-cav av-m">+</div><div style="flex:1"><div class="wz-cname">Hausarzt / Haus\u00e4rztin</div><div class="wz-csub">Empfohlen \u2014 Praxis erh\u00e4lt eine Kopie</div></div><span class="wz-badge opt">Optional</span>';
-  var hacard = el('div','wz-ccard');
-  hacard.innerHTML = '<div class="wz-row" style="margin-bottom:10px"><div class="wz-field"><label>Name Arzt/\u00c4rztin</label><input type="text" placeholder="Dr. ..."/></div><div class="wz-field"><label>Praxisname</label><input type="text" placeholder="Praxis ..."/></div></div><div class="wz-field"><label>E-Mail Praxis</label><input type="email" placeholder="praxis@beispiel.ch"/><span class="wz-hint">Wird im Dokument aufgef\u00fchrt</span></div>';
+  var hablock=el('div','wz-cblock');
+  var hahdr=el('div','wz-chdr');
+  var haav=el('div','wz-cav av-m'); haav.textContent='+';
+  var hameta=el('div');
+  var hacn=el('div','wz-cname'); hacn.textContent=T.ha_name;
+  var hacs=el('div','wz-csub'); hacs.textContent=T.ha_sub;
+  hameta.appendChild(hacn); hameta.appendChild(hacs);
+  var habadge=el('span','wz-badge opt'); habadge.textContent=T.ha_badge;
+  hahdr.appendChild(haav); hahdr.appendChild(hameta); hahdr.appendChild(habadge);
+  var hacard=el('div','wz-ccard');
+  var har1=el('div','wz-row'); har1.style.marginBottom='10px';
+  har1.innerHTML='<div class="wz-field"><label>'+T.doc_name+'</label><input type="text" placeholder="'+T.doc_name_ph+'"/></div><div class="wz-field"><label>'+T.praxis_label+'</label><input type="text" placeholder="'+T.praxis_ph+'"/></div>';
+  var haem=el('div','wz-field'); haem.innerHTML='<label>'+T.doc_email+'</label><input type="email" placeholder="'+T.doc_email_ph+'"/><span class="wz-hint">'+T.doc_email_hint+'</span>';
+  hacard.appendChild(har1); hacard.appendChild(haem);
   hablock.appendChild(hahdr); hablock.appendChild(hacard);
   wrap.appendChild(hablock);
 
-  // Datenweitergabe
-  var dw = el('div','wz-dw');
-  var news = el('div','wz-news');
-  news.innerHTML = '<div class="wz-news-hdr"><div class="wz-news-dot"></div><span class="wz-news-src">Bundesgericht \u00b7 Urteil April 2026</span></div><div class="wz-news-body"><div class="wz-news-title">Tochter stirbt im Spital \u2014 Mutter erf\u00e4hrt nicht warum</div><div class="wz-news-text">Eine 61-j\u00e4hrige Frau erlitt einen Schlaganfall und starb im Spital. Ihre Mutter wollte Einsicht in die Krankenakte \u2014 und wurde abgewiesen. Das Bundesgericht best\u00e4tigte: Das Arztgeheimnis sch\u00fctzt die Privatsph\u00e4re auch \u00fcber den Tod hinaus.</div><a class="wz-news-link" href="https://www.beobachter.ch" target="_blank">Zum Artikel \u2014 Beobachter.ch &#8599;</a></div>';
+  var dw=el('div','wz-dw');
+  var news=el('div','wz-news');
+  news.innerHTML='<div class="wz-news-hdr"><div class="wz-news-dot"></div><span class="wz-news-src">'+T.dw_news_src+'</span></div><div class="wz-news-body"><div class="wz-news-title">'+T.dw_news_title+'</div><div class="wz-news-text">'+T.dw_news_text+'</div><a class="wz-news-link" href="https://www.beobachter.ch" target="_blank">'+T.dw_news_link+' &#8599;</a></div>';
   dw.appendChild(news);
-
-  var dwbox = el('div','wz-dwbox');
-  var dwhdr = el('div','wz-dwhdr');
-  dwhdr.innerHTML = '<div class="wz-dwico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><div class="wz-dwt">Datenweitergabe im Todesfall regeln</div><div class="wz-dws">Damit Ihre Angeh\u00f6rigen Auskunft erhalten d\u00fcrfen</div></div>';
-  var dwbd = el('div','wz-dwbd');
-  var dwintro = el('div','wz-dwintro'); dwintro.textContent='Ohne eine ausdr\u00fcckliche Erlaubnis darf das Spital Ihre Krankenakte nach dem Tod niemandem zeigen \u2014 auch nicht Ihrem Ehepartner oder Ihren Kindern.';
-  var dwhint = el('div','wz-dwhint'); dwhint.textContent='Mehrere Optionen m\u00f6glich \u2014 ausser \u201eNein\u201c.';
+  var dwbox=el('div','wz-dwbox');
+  var dwhdr=el('div','wz-dwhdr');
+  dwhdr.innerHTML='<div class="wz-dwico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><div class="wz-dwt">'+T.dw_title+'</div><div class="wz-dws">'+T.dw_sub+'</div></div>';
+  var dwbd=el('div','wz-dwbd');
+  var dwintro=el('div','wz-dwintro'); dwintro.textContent=T.dw_intro;
+  var dwhint=el('div','wz-dwhint'); dwhint.textContent=T.dw_hint;
   dwbd.appendChild(dwintro); dwbd.appendChild(dwhint);
-  dwbd.appendChild(mkDwRow('wz-dw1','Meine Vertrauenspersonen d\u00fcrfen Einsicht in meine Krankenakte erhalten','Das Spital und behandelnde \u00c4rzte sind berechtigt, den eingetragenen Vertrauenspersonen Auskunft zu erteilen \u2014 auch nach meinem Tod.',false));
-  dwbd.appendChild(mkDwRow('wz-dw2','Mein Hausarzt darf meine Daten an spezialisierte \u00c4rzte weitergeben','Falls ich bewusstlos bin, darf mein Hausarzt relevante medizinische Informationen an das behandelnde Spital weitergeben.',false));
-  var dwor = el('div','wz-dwor'); dwor.innerHTML='<div class="wz-dworline"></div><div class="wz-dwortext">oder</div><div class="wz-dworline"></div>';
-  dwbd.appendChild(dwor);
-  dwbd.appendChild(mkDwRow('wz-dw3','Nein \u2014 ich m\u00f6chte keine Datenweitergabe erlauben','Das Arztgeheimnis gilt vollumf\u00e4nglich. Keine Person erh\u00e4lt Einsicht in meine Krankenakte.',true));
-  var dwnote = el('div','wz-dwnote'); dwnote.textContent='Diese Angaben erscheinen als separater Abschnitt in Ihrer Verf\u00fcgung.';
-  dwbd.appendChild(dwnote);
+  T.dw_opts.forEach(function(o){
+    dwbd.appendChild(mkDwRow(o[0],o[2],o[3],o[1]));
+    if(o[1]===false && T.dw_opts.indexOf(o)===1){
+      var dwor=el('div','wz-dwor'); dwor.innerHTML='<div class="wz-dworline"></div><div class="wz-dwortext">'+T.dw_or+'</div><div class="wz-dworline"></div>';
+      dwbd.appendChild(dwor);
+    }
+  });
+  var dwnote=el('div','wz-dwnote'); dwnote.textContent=T.dw_note; dwbd.appendChild(dwnote);
   dwbox.appendChild(dwhdr); dwbox.appendChild(dwbd);
   dw.appendChild(dwbox);
   wrap.appendChild(dw);
 
-  var ns = el('div','wz-nsteps'); ns.style.marginTop='1.25rem';
-  ns.innerHTML = '<div class="wz-nstitle">Was passiert nach dem Ausf\u00fcllen?</div><div class="wz-nsrow"><div class="wz-nsnum">1</div><div><div class="wz-nstext">PDF herunterladen</div></div></div><div class="wz-nsrow"><div class="wz-nsnum">2</div><div><div class="wz-nstext">Ausdrucken, datieren &amp; unterschreiben</div><div class="wz-nssub">ZGB Art. 371</div></div></div><div class="wz-nsrow"><div class="wz-nsnum">3</div><div><div class="wz-nstext">Kopien weiterleiten</div></div></div><div class="wz-nsrow"><div class="wz-nsnum">4</div><div><div class="wz-nstext">Original sicher aufbewahren</div></div></div>';
+  var ns=el('div','wz-nsteps'); ns.style.marginTop='1.25rem';
+  var nst=el('div','wz-nstitle'); nst.textContent=T.nsteps_title; ns.appendChild(nst);
+  T.nsteps.forEach(function(s){
+    var row=el('div','wz-nsrow');
+    var num=el('div','wz-nsnum'); num.textContent=(T.nsteps.indexOf(s)+1);
+    var txt=el('div');
+    var t=el('div','wz-nstext'); t.textContent=s[0]; txt.appendChild(t);
+    if(s[1]){var sub=el('div','wz-nssub'); sub.textContent=s[1]; txt.appendChild(sub);}
+    row.appendChild(num); row.appendChild(txt); ns.appendChild(row);
+  });
   wrap.appendChild(ns);
   return wrap;
 }
 
-function step5() {
-  var wrap = el('div');
-  var st = function(t){ var d=el('div','wz-stitle'); d.textContent=t; return d; };
-  var cr = function(l,v){ var d=el('div','wz-crow'); d.innerHTML='<span class="wz-clabel">'+l+'</span><span class="wz-cval">'+v+'</span>'; return d; };
+function step5(){
+  var wrap=el('div');
+  var st=function(t){var d=el('div','wz-stitle');d.textContent=t;return d;};
+  var cr=function(l,v){var d=el('div','wz-crow');d.innerHTML='<span class="wz-clabel">'+l+'</span><span class="wz-cval">'+v+'</span>';return d;};
 
-  wrap.appendChild(st('Pers\u00f6nliche Angaben'));
+  wrap.appendChild(st(T.titles[0]));
   var b1=el('div','wz-cblock2');
-  var e1btn=el('button','wz-editbtn'); e1btn.textContent='Bearbeiten'; e1btn.addEventListener('click',function(){cur=0;render();});
-  var r1=el('div','wz-crow'); r1.innerHTML='<span class="wz-clabel">Name</span>'; var rv1=el('span','wz-cval'); rv1.textContent='Maria M\u00fcller '; rv1.appendChild(e1btn); r1.appendChild(rv1);
-  b1.appendChild(r1); b1.appendChild(cr('Geburtsdatum','12.03.1958')); b1.appendChild(cr('Kanton','Z\u00fcrich')); b1.appendChild(cr('E-Mail','maria@gmail.com'));
+  var e1btn=el('button','wz-editbtn'); e1btn.textContent=T.edit_btn; e1btn.addEventListener('click',function(){cur=0;render();});
+  var r1=el('div','wz-crow'); r1.innerHTML='<span class="wz-clabel">'+T.confirm_labels[0]+'</span>';
+  var rv1=el('span','wz-cval'); rv1.textContent=T.confirm_vals[0]+' '; rv1.appendChild(e1btn); r1.appendChild(rv1);
+  b1.appendChild(r1);
+  b1.appendChild(cr(T.confirm_labels[1],T.confirm_vals[1]));
+  b1.appendChild(cr(T.confirm_labels[2],T.confirm_vals[2]));
+  b1.appendChild(cr(T.confirm_labels[3],T.confirm_vals[3]));
   wrap.appendChild(b1);
 
-  wrap.appendChild(st('Medizinische W\u00fcnsche'));
+  wrap.appendChild(st(T.titles[1]));
   var b2=el('div','wz-cblock2');
-  var e2btn=el('button','wz-editbtn'); e2btn.textContent='Bearbeiten'; e2btn.addEventListener('click',function(){cur=1;render();});
-  var r2=el('div','wz-crow'); r2.innerHTML='<span class="wz-clabel">Lebenserhaltung</span>'; var rv2=el('span','wz-cval'); rv2.textContent='Keine '; rv2.appendChild(e2btn); r2.appendChild(rv2);
-  b2.appendChild(r2); b2.appendChild(cr('Schmerzbehandlung','Ja, immer')); b2.appendChild(cr('Organspende','Ja, alle Organe'));
+  var e2btn=el('button','wz-editbtn'); e2btn.textContent=T.edit_btn; e2btn.addEventListener('click',function(){cur=1;render();});
+  var r2=el('div','wz-crow'); r2.innerHTML='<span class="wz-clabel">'+T.confirm_labels[4]+'</span>';
+  var rv2=el('span','wz-cval'); rv2.textContent=T.confirm_vals[4]+' '; rv2.appendChild(e2btn); r2.appendChild(rv2);
+  b2.appendChild(r2);
+  b2.appendChild(cr(T.confirm_labels[5],T.confirm_vals[5]));
+  b2.appendChild(cr(T.confirm_labels[6],T.confirm_vals[6]));
   wrap.appendChild(b2);
 
-  wrap.appendChild(st('Situationen \u0026 Werte'));
+  wrap.appendChild(st(T.titles[2]));
   var b3=el('div','wz-cblock2');
-  var r3=el('div','wz-crow'); r3.innerHTML='<span class="wz-clabel">Situationen</span>'; var rv3=el('span','wz-cval'); ['Koma','Demenz','Reanimation'].forEach(function(t){ var tg=el('span','wz-tag'); tg.textContent=t; rv3.appendChild(tg); }); r3.appendChild(rv3);
-  b3.appendChild(r3); b3.appendChild(cr('Erg\u00e4nzung','<span class="muted">Keine Angabe</span>'));
+  var r3=el('div','wz-crow'); r3.innerHTML='<span class="wz-clabel">'+T.confirm_labels[7]+'</span>';
+  var rv3=el('span','wz-cval'); rv3.textContent=T.confirm_vals[7]||'—'; r3.appendChild(rv3);
+  b3.appendChild(r3);
+  b3.appendChild(cr(T.confirm_labels[8],T.confirm_vals[8]));
   wrap.appendChild(b3);
 
-  wrap.appendChild(st('Vertrauenspersonen'));
+  wrap.appendChild(st(T.titles[3]));
   var b4=el('div','wz-cblock2');
-  b4.innerHTML='<div class="wz-prow"><div class="wz-pav">TM</div><div><div class="wz-pname">Thomas M\u00fcller</div><div class="wz-prole">Ehemann</div></div><span class="wz-ptag">Vertretung</span></div><div class="wz-prow"><div class="wz-pav gray">SB</div><div><div class="wz-pname">Dr. Sabine Bauer</div><div class="wz-prole">Haus\u00e4rztin</div></div><span class="wz-ptag gray">Kopie</span></div>';
+  b4.innerHTML='<div class="wz-prow"><div class="wz-pav">TM</div><div><div class="wz-pname">Thomas M\u00fcller</div><div class="wz-prole">'+T.share_contacts[0][2]+'</div></div><span class="wz-ptag">'+T.vertretung_hint+'</span></div>';
   wrap.appendChild(b4);
 
-  wrap.appendChild(st('Datenweitergabe'));
+  wrap.appendChild(st(T.confirm_labels[9]));
   var b5=el('div','wz-cblock2');
-  b5.appendChild(cr('Krankenakte','Vertrauenspersonen d\u00fcrfen Einsicht erhalten'));
-  b5.appendChild(cr('Hausarzt','Darf Daten weiterleiten'));
+  b5.appendChild(cr(T.confirm_labels[9],T.confirm_vals[9]));
+  b5.appendChild(cr(T.confirm_labels[10],T.confirm_vals[10]));
   wrap.appendChild(b5);
 
-  var warn=el('div','wz-warn'); warn.innerHTML='<div class="wz-warn-title">Wichtig \u2014 nach dem Download</div><div class="wz-warn-body">Das PDF muss ausgedruckt, handschriftlich datiert und unterschrieben werden. Erst dann ist Ihre Verf\u00fcgung rechtsg\u00fcltig (ZGB Art. 371).</div>';
+  var warn=el('div','wz-warn');
+  warn.innerHTML='<div class="wz-warn-title">'+T.warn_title+'</div><div class="wz-warn-body">'+T.warn_body+'</div>';
   wrap.appendChild(warn);
 
-  wrap.appendChild(st('Best\u00e4tigung'));
+  wrap.appendChild(st(''));
   var c1=el('div','wz-consent'); c1.id='wz-c1';
   var c1chk=el('div','wz-cchk'); c1chk.innerHTML=CHK;
-  var c1txt=el('div'); c1txt.innerHTML='<div class="wz-consent-text">Ich best\u00e4tige, dass diese Angaben meinem freien Willen entsprechen und ich zum jetzigen Zeitpunkt urteilsf\u00e4hig bin.</div>';
+  var c1txt=el('div'); c1txt.innerHTML='<div class="wz-consent-text">'+T.consent1+'</div>';
   c1.appendChild(c1chk); c1.appendChild(c1txt);
-  c1.addEventListener('click', function(){ c1.classList.toggle('checked'); checkReady(); });
+  c1.addEventListener('click',function(){c1.classList.toggle('checked');checkReady();});
   wrap.appendChild(c1);
 
   var c2=el('div','wz-consent'); c2.id='wz-c2';
   var c2chk=el('div','wz-cchk'); c2chk.innerHTML=CHK;
-  var c2txt=el('div'); c2txt.innerHTML='<div class="wz-consent-text">Ich bin einverstanden, gelegentliche Vorsorge-Tipps und einen j\u00e4hrlichen Erinnerungs-Newsletter per E-Mail zu erhalten.</div><div class="wz-consent-sub">Kein Spam. Jederzeit abmeldbar. Wir speichern nur Name, E-Mail und Erstellungsdatum \u2014 kein medizinischer Inhalt.</div>';
+  var c2txt=el('div'); c2txt.innerHTML='<div class="wz-consent-text">'+T.consent2+'</div><div class="wz-consent-sub">'+T.consent2_sub+'</div>';
   c2.appendChild(c2chk); c2.appendChild(c2txt);
-  c2.addEventListener('click', function(){ c2.classList.toggle('checked'); checkReady(); });
+  c2.addEventListener('click',function(){c2.classList.toggle('checked');checkReady();});
   wrap.appendChild(c2);
-
   return wrap;
 }
 
-function checkReady() {
-  var btn = document.getElementById('wz-submit');
-  var hint = document.getElementById('wz-submit-hint');
-  if (!btn) return;
-  var c1 = document.getElementById('wz-c1');
-  var c2 = document.getElementById('wz-c2');
-  var ok = c1 && c1.classList.contains('checked') && c2 && c2.classList.contains('checked');
-  btn.classList.toggle('ready', ok);
-  if (hint) hint.style.display = ok ? 'none' : 'block';
+function checkReady(){
+  var btn=document.getElementById('wz-submit');
+  var hint=document.getElementById('wz-submit-hint');
+  if(!btn)return;
+  var c1=document.getElementById('wz-c1'),c2=document.getElementById('wz-c2');
+  var ok=c1&&c1.classList.contains('checked')&&c2&&c2.classList.contains('checked');
+  btn.classList.toggle('ready',ok);
+  if(hint)hint.style.display=ok?'none':'block';
 }
 
-function renderDone() {
-  var content = document.getElementById('wz-content');
-  content.innerHTML = '';
-  var panel = el('div','wz-panel');
-  var done = el('div','wz-done');
-  done.innerHTML = '<div class="wz-done-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#0F6E56" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="wz-done-h">Ihre Verf\u00fcgung ist bereit</div><div class="wz-done-sub">Das PDF wurde generiert. Wie m\u00f6chten Sie weiter vorgehen?</div>';
+function renderDone(){
+  var content=document.getElementById('wz-content');
+  content.innerHTML='';
+  var panel=el('div','wz-panel');
+  var done=el('div','wz-done');
+  done.innerHTML='<div class="wz-done-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#0F6E56" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="wz-done-h">'+T.done_h+'</div><div class="wz-done-sub">'+T.done_sub+'</div>';
 
-  var vcards = el('div','wz-vcards');
-
-  function mkVcard(id, title, sub, pill, pillClass, bodyHTML, first) {
-    var card = el('div','wz-vcard'+(first?' sel':''));
-    var hdr = el('div','wz-vcdhdr');
-    var radio = el('div','wz-vradio'); radio.innerHTML='<svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3" fill="#fff"/></svg>';
-    var meta = el('div'); meta.style.flex='1';
-    var titleEl = el('div','wz-vcdtitle'); titleEl.textContent = title;
-    var subEl = el('div','wz-vcdsub'); subEl.textContent = sub;
-    var pillEl = el('div','wz-vpill '+pillClass); pillEl.innerHTML = pill;
-    meta.appendChild(titleEl); meta.appendChild(subEl); meta.appendChild(pillEl);
+  var vcards=el('div','wz-vcards');
+  function mkVcard(title,badge,sub,pill,pillCls,bodyHTML,first){
+    var card=el('div','wz-vcard'+(first?' sel':''));
+    var hdr=el('div','wz-vcdhdr');
+    var radio=el('div','wz-vradio'); radio.innerHTML='<svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3" fill="#fff"/></svg>';
+    var meta=el('div'); meta.style.flex='1';
+    var row=el('div'); row.style.cssText='display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap;';
+    var titleEl=el('div','wz-vcdtitle'); titleEl.textContent=title; row.appendChild(titleEl);
+    if(badge){var b=el('span','wz-recbadge'); b.textContent=badge; row.appendChild(b);}
+    var subEl=el('div','wz-vcdsub'); subEl.textContent=sub;
+    var pillEl=el('div','wz-vpill '+pillCls); pillEl.innerHTML=pill;
+    meta.appendChild(row); meta.appendChild(subEl); meta.appendChild(pillEl);
     hdr.appendChild(radio); hdr.appendChild(meta);
-    var body = el('div','wz-vcdbody'); body.innerHTML = bodyHTML;
+    var body=el('div','wz-vcdbody'); body.innerHTML=bodyHTML;
     card.appendChild(hdr); card.appendChild(body);
-    card.addEventListener('click', function(){
-      qa('.wz-vcard',vcards).forEach(function(c){ c.classList.remove('sel'); });
+    card.addEventListener('click',function(){
+      qa('.wz-vcard',vcards).forEach(function(c){c.classList.remove('sel');});
       card.classList.add('sel');
     });
     return card;
   }
 
-  vcards.appendChild(mkVcard('vc1','Ausdrucken \u0026 unterschreiben','Klassischer Weg \u2014 kein Setup, funktioniert immer.',
-    '<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2 2 4-4" stroke="#085041" stroke-width="1.5" stroke-linecap="round"/></svg> Vollst\u00e4ndig rechtsg\u00fcltig \u2014 \u00c4rzte sind verpflichtet, sich daran zu halten','full',
-    '<div class="wz-vsteps"><div class="wz-vstep"><div class="wz-vstepnum">1</div><div class="wz-vsteptext">PDF herunterladen und ausdrucken</div></div><div class="wz-vstep"><div class="wz-vstepnum">2</div><div><div class="wz-vsteptext">Datum setzen und von Hand unterschreiben</div><div class="wz-vstepsub">Erst mit Ihrer Unterschrift gilt das Dokument rechtlich</div></div></div><div class="wz-vstep"><div class="wz-vstepnum">3</div><div class="wz-vsteptext">Kopien pers\u00f6nlich oder per Post weiterleiten</div></div></div><button class="wz-dl-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 3v13M7 11l5 5 5-5M4 20h16" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>PDF herunterladen</button>',
-    true));
+  var vc1steps = T.vc1_steps.map(function(s,i){
+    var sub = T.vc1_step_subs[i] ? '<div class="wz-vstepsub">'+T.vc1_step_subs[i]+'</div>' : '';
+    return '<div class="wz-vstep"><div class="wz-vstepnum">'+(i+1)+'</div><div><div class="wz-vsteptext">'+s+'</div>'+sub+'</div></div>';
+  }).join('');
+  vcards.appendChild(mkVcard(T.vc1_title,T.vc1_badge,T.vc1_sub,
+    '<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2 2 4-4" stroke="#085041" stroke-width="1.5" stroke-linecap="round"/></svg> '+T.vc1_pill,'full',
+    '<div class="wz-vsteps">'+vc1steps+'</div><button class="wz-dl-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 3v13M7 11l5 5 5-5M4 20h16" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'+T.vc1_btn+'</button>',true));
 
-  vcards.appendChild(mkVcard('vc2','Online unterschreiben mit SwissID','Kein Ausdrucken n\u00f6tig \u2014 alles bleibt digital.',
-    '<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2 2 4-4" stroke="#085041" stroke-width="1.5" stroke-linecap="round"/></svg> Vollst\u00e4ndig rechtsg\u00fcltig \u2014 digitale Signatur gleichgestellt','full',
-    '<div class="wz-vsteps"><div class="wz-vstep"><div class="wz-vstepnum">1</div><div><div class="wz-vsteptext">SwissID App \u00f6ffnen</div><div class="wz-vstepsub">Setup ca. 10 Min. auf swissid.ch</div></div></div><div class="wz-vstep"><div class="wz-vstepnum">2</div><div class="wz-vsteptext">Dokument erscheint automatisch zur Signatur</div></div><div class="wz-vstep"><div class="wz-vstepnum">3</div><div class="wz-vsteptext">Signiert \u2014 fertig. Kein Ausdrucken n\u00f6tig.</div></div></div><button class="wz-dl-btn">Mit SwissID unterschreiben</button>',
-    false));
+  var vc2steps = T.vc2_steps.map(function(s,i){
+    var sub = T.vc2_step_subs[i] ? '<div class="wz-vstepsub">'+T.vc2_step_subs[i]+'</div>' : '';
+    return '<div class="wz-vstep"><div class="wz-vstepnum">'+(i+1)+'</div><div><div class="wz-vsteptext">'+s+'</div>'+sub+'</div></div>';
+  }).join('');
+  vcards.appendChild(mkVcard(T.vc2_title,null,T.vc2_sub,
+    '<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2 2 4-4" stroke="#085041" stroke-width="1.5" stroke-linecap="round"/></svg> '+T.vc2_pill,'full',
+    '<div class="wz-vsteps">'+vc2steps+'</div><button class="wz-dl-btn">'+T.vc2_btn+'</button>',false));
 
-  vcards.appendChild(mkVcard('vc3','Jetzt nur teilen \u2014 Unterschrift sp\u00e4ter','Vertrauenspersonen erhalten das Dokument und kennen Ihre W\u00fcnsche.',
-    '<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M5 2v4M5 7.5v.5" stroke="#7a5200" stroke-width="1.5" stroke-linecap="round"/></svg> Noch nicht unterschrieben \u2014 Unterschrift folgt sp\u00e4ter','part',
-    '<div class="wz-infoblue" style="margin-bottom:12px">\u00c4rzte ber\u00fccksichtigen Ihre Wertvorstellungen \u2014 sie sind aber erst nach Ihrer Unterschrift verpflichtet, sich daran zu halten.</div><div class="wz-sharelabel">PDF wird jetzt gesendet an:</div><div class="wz-sharerow"><div class="wz-shareav">TM</div><div><div class="wz-sharename">Thomas M\u00fcller</div><div class="wz-sharerole">Ehemann \u00b7 Vertretung</div></div><button class="wz-sharebtn">Senden</button></div><div class="wz-sharerow"><div class="wz-shareav gray">SB</div><div><div class="wz-sharename">Dr. Sabine Bauer</div><div class="wz-sharerole">Haus\u00e4rztin</div></div><button class="wz-sharebtn">Senden</button></div><div class="wz-wmini"><div class="wz-wmini-t">Erinnerung in 14 Tagen</div><div class="wz-wmini-b">Wir schicken Ihnen eine E-Mail \u2014 damit Sie die Unterschrift nachholen k\u00f6nnen.</div></div>',
-    false));
+  var shareRows = T.share_contacts.map(function(c){
+    return '<div class="wz-sharerow"><div class="wz-shareav'+(T.share_contacts.indexOf(c)>0?' gray':'')+'">'+c[0]+'</div><div><div class="wz-sharename">'+c[1]+'</div><div class="wz-sharerole">'+c[2]+'</div></div><button class="wz-sharebtn">'+T.share_btn+'</button></div>';
+  }).join('');
+  vcards.appendChild(mkVcard(T.vc3_title,null,T.vc3_sub,
+    '<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M5 2v4M5 7.5v.5" stroke="#7a5200" stroke-width="1.5" stroke-linecap="round"/></svg> '+T.vc3_pill,'part',
+    '<div class="wz-infoblue" style="margin-bottom:12px">'+T.vc3_info+'</div><div class="wz-sharelabel">'+T.share_label+'</div>'+shareRows+'<div class="wz-wmini"><div class="wz-wmini-t">'+T.reminder_title+'</div><div class="wz-wmini-b">'+T.reminder_body+'</div></div>',false));
 
   done.appendChild(vcards);
   panel.appendChild(done);
   content.appendChild(panel);
 }
 
-function bindRadios(ctx) {
-  qa('.wz-ropt', ctx).forEach(function(opt){
-    opt.addEventListener('click', function(){
-      var g = opt.dataset.group;
-      qa('[data-group="'+g+'"]', ctx).forEach(function(x){ x.classList.remove('selected'); var inp=x.querySelector('input[type=radio]'); if(inp) inp.checked=false; });
-      opt.classList.add('selected');
-      var inp = opt.querySelector('input[type=radio]');
-      if(inp) inp.checked = true;
-      var grid = document.getElementById('wz-orgrid');
-      if(grid && g==='organ') grid.classList.toggle('visible', inp && inp.value==='bestimmte');
+function bindRadios(ctx){
+  qa('.wz-ropt',ctx).forEach(function(o){
+    o.addEventListener('click',function(){
+      var g=o.dataset.group;
+      qa('[data-group="'+g+'"]',ctx).forEach(function(x){x.classList.remove('selected');var inp=x.querySelector('input[type=radio]');if(inp)inp.checked=false;});
+      o.classList.add('selected');
+      var inp=o.querySelector('input[type=radio]');if(inp)inp.checked=true;
+      var grid=document.getElementById('wz-orgrid');
+      if(grid&&g==='organ')grid.classList.toggle('visible',inp&&inp.value==='bestimmte');
     });
   });
 }
 
-function scrollToTop() {
-  window.scrollTo({top: 0, behavior: 'smooth'});
-  try { window.parent.postMessage({action:'scrollToWizard'}, '*'); } catch(e){}
+function scrollToTop(){
+  var wrap=document.getElementById('wz-progress');
+  if(wrap){
+    var top=wrap.getBoundingClientRect().top+window.pageYOffset-140;
+    window.scrollTo({top:top,behavior:'smooth'});
+  }
 }
 
-function showError(msg) {
-  var existing = document.getElementById('wz-error');
-  if (existing) existing.remove();
-  var err = el('div','');
-  err.id = 'wz-error';
-  err.style.cssText = 'background:#FCEBEB;border:1px solid #E24B4A;border-radius:8px;padding:10px 14px;margin-top:12px;font-size:13px;color:#A32D2D;font-family:sans-serif;line-height:1.5;';
-  err.textContent = msg;
-  var nav = document.querySelector('.wz-nav');
-  if (nav) nav.parentNode.insertBefore(err, nav);
-  err.scrollIntoView({behavior:'smooth', block:'nearest'});
+function showError(msg){
+  var existing=document.getElementById('wz-error');
+  if(existing)existing.remove();
+  var err=el('div','');
+  err.id='wz-error';
+  err.style.cssText='background:#FCEBEB;border:1px solid #E24B4A;border-radius:8px;padding:10px 14px;margin-top:12px;font-size:13px;color:#A32D2D;font-family:sans-serif;line-height:1.5;';
+  err.textContent=msg;
+  var nav=document.querySelector('.wz-nav');
+  if(nav)nav.parentNode.insertBefore(err,nav);
+  err.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 
-function validateStep(step) {
-  var panel = document.getElementById('wz-content');
-
-  if (step === 0) {
-    var inputs = panel.querySelectorAll('input[type=text], input[type=email], input[type=date]');
-    for (var i = 0; i < inputs.length; i++) {
-      if (!inputs[i].value.trim()) {
-        showError('Bitte f\u00fcllen Sie alle Pflichtfelder aus.');
-        inputs[i].focus();
-        inputs[i].style.borderColor = '#E24B4A';
-        return false;
-      }
-      inputs[i].style.borderColor = '';
+function validateStep(step){
+  var panel=document.getElementById('wz-content');
+  if(step===0){
+    var inputs=panel.querySelectorAll('input[type=text],input[type=date]');
+    for(var i=0;i<inputs.length;i++){
+      if(!inputs[i].value.trim()){showError(T.err_required);inputs[i].focus();inputs[i].style.borderColor='#E24B4A';return false;}
+      inputs[i].style.borderColor='';
     }
-    var email = panel.querySelector('input[type=email]');
-    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
-      showError('Bitte geben Sie eine g\u00fcltige E-Mail-Adresse ein.');
-      email.focus();
-      email.style.borderColor = '#E24B4A';
-      return false;
+    var email=panel.querySelector('input[type=email]');
+    if(email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)){showError(T.err_email);email.focus();email.style.borderColor='#E24B4A';return false;}
+  }
+  if(step===1){
+    var groups=[['life',T.field_life],['pain',T.field_pain],['organ',T.field_organ]];
+    for(var g=0;g<groups.length;g++){
+      var checked=panel.querySelector('input[name="'+groups[g][0]+'"]:checked');
+      if(!checked){showError(T.err_selection+groups[g][1]);return false;}
+      if(checked.value==='bestimmte'&&!panel.querySelector('.wz-ortile.selected')){showError(T.err_organ);return false;}
     }
   }
-
-  if (step === 1) {
-    var groups = ['life','pain','organ'];
-    for (var g = 0; g < groups.length; g++) {
-      var checked = panel.querySelector('input[name="'+groups[g]+'"]:checked');
-      if (!checked) {
-        var labels = {'life':'Lebenserhaltende Massnahmen','pain':'Schmerzbehandlung','organ':'Organspende'};
-        showError('Bitte w\u00e4hlen Sie eine Option f\u00fcr: ' + labels[groups[g]]);
-        return false;
-      }
-      if (checked.value === 'bestimmte') {
-        var anyOrgan = panel.querySelector('.wz-ortile.selected');
-        if (!anyOrgan) {
-          showError('Bitte w\u00e4hlen Sie mindestens ein Organ aus.');
-          return false;
-        }
-      }
-    }
+  if(step===3){
+    var vp1=panel.querySelector('.wz-cblock input[type=text]');
+    var vp1email=panel.querySelector('.wz-cblock input[type=email]');
+    if(!vp1||!vp1.value.trim()||!vp1email||!vp1email.value.trim()){showError(T.err_vp1);return false;}
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(vp1email.value)){showError(T.err_vp1_email);vp1email.style.borderColor='#E24B4A';return false;}
   }
-
-  if (step === 3) {
-    var vp1fields = panel.querySelectorAll('.wz-cblock:first-of-type input[type=text]');
-    var filled = false;
-    vp1fields.forEach(function(f){ if(f.value.trim()) filled = true; });
-    var emailVP = panel.querySelector('.wz-cblock:first-of-type input[type=email]');
-    if (!filled || !emailVP || !emailVP.value.trim()) {
-      showError('Bitte f\u00fcllen Sie mindestens Vertrauensperson 1 mit Name und E-Mail aus.');
-      return false;
-    }
-    if (emailVP && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVP.value)) {
-      showError('Bitte geben Sie eine g\u00fcltige E-Mail f\u00fcr Vertrauensperson 1 ein.');
-      emailVP.style.borderColor = '#E24B4A';
-      return false;
-    }
-  }
-
   return true;
 }
 
-function render() {
+function render(){
   renderProgress();
-  if (cur === TOTAL) { renderDone(); return; }
-  var content = document.getElementById('wz-content');
-  content.innerHTML = '';
-  var panel = el('div','wz-panel');
-  var num = el('div','wz-num'); num.textContent = 'Schritt '+(cur+1)+' von '+TOTAL;
-  var title = el('div','wz-title'); title.textContent = TITLES[cur];
-  var desc = el('div','wz-desc'); desc.textContent = DESCS[cur];
+  if(cur===TOTAL){renderDone();return;}
+  var content=document.getElementById('wz-content');
+  content.innerHTML='';
+  var panel=el('div','wz-panel');
+  var num=el('div','wz-num'); num.textContent='Schritt '+(cur+1)+' / '+TOTAL;
+  var title=el('div','wz-title'); title.textContent=T.titles[cur];
+  var desc=el('div','wz-desc'); desc.textContent=T.descs[cur];
   panel.appendChild(num); panel.appendChild(title); panel.appendChild(desc);
-
-  var body = [step1,step2,step3,step4,step5][cur]();
+  var body=[step1,step2,step3,step4,step5][cur]();
   panel.appendChild(body);
   bindRadios(panel);
-
-  var nav = el('div','wz-nav');
-  if (cur > 0) {
-    var back = el('button','wz-back'); back.textContent = 'Zur\u00fcck';
-    back.addEventListener('click', function(){ cur--; render(); scrollToTop(); });
+  var nav=el('div','wz-nav');
+  if(cur>0){
+    var back=el('button','wz-back'); back.textContent=T.btn_back;
+    back.addEventListener('click',function(){cur--;render();scrollToTop();});
     nav.appendChild(back);
-  } else {
-    nav.appendChild(el('span'));
-  }
-
-  if (cur < TOTAL - 1) {
-    var next = el('button','wz-next'); next.textContent = 'Weiter';
-    next.addEventListener('click', function(){
-      var err = document.getElementById('wz-error');
-      if (err) err.remove();
-      if (!validateStep(cur)) return;
-      cur++; render();
-      scrollToTop();
+  } else { nav.appendChild(el('span')); }
+  if(cur<TOTAL-1){
+    var next=el('button','wz-next'); next.textContent=T.btn_next;
+    next.addEventListener('click',function(){
+      var err=document.getElementById('wz-error');if(err)err.remove();
+      if(!validateStep(cur))return;
+      cur++;render();scrollToTop();
     });
     nav.appendChild(next);
   } else {
-    var submitWrap = el('div');
-    var submit = el('button','wz-submit'); submit.id='wz-submit'; submit.textContent = 'PDF generieren';
-    submit.addEventListener('click', function(){ if(submit.classList.contains('ready')){ cur=TOTAL; render(); } });
-    var hint = el('div','wz-submit-hint'); hint.id='wz-submit-hint'; hint.textContent='Bitte beide Felder best\u00e4tigen';
-    submitWrap.appendChild(submit); submitWrap.appendChild(hint);
-    nav.appendChild(submitWrap);
+    var sw=el('div');
+    var submit=el('button','wz-submit'); submit.id='wz-submit'; submit.textContent=T.btn_submit;
+    submit.addEventListener('click',function(){if(submit.classList.contains('ready')){cur=TOTAL;render();}});
+    var hint=el('div','wz-submit-hint'); hint.id='wz-submit-hint'; hint.textContent=T.submit_hint;
+    sw.appendChild(submit); sw.appendChild(hint);
+    nav.appendChild(sw);
   }
   panel.appendChild(nav);
   content.appendChild(panel);
 }
 
-render();
+// Init with detected language
+setLang(detectLang());
 })();
 </script>
-</body>
-</html>
